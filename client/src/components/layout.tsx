@@ -353,7 +353,7 @@ export function Layout({
         </div>
 
         {/* Alert/Caution Icon - Sticky at bottom of sidebar viewport */}
-        <div className="sticky bottom-0 bg-gray-950 p-4 border-t border-gray-700 flex justify-center">
+        <div className="sticky bottom-0 bg-gray-950 p-2 border-t border-gray-700 flex justify-center">
           <Button
             variant="ghost"
             onClick={() => setDisclaimerOpen(true)}
