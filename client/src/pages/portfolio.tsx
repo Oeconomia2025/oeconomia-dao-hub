@@ -423,10 +423,10 @@ export function Portfolio() {
               {balancesLoading ? (
                 <LoadingSpinner text="Loading portfolio" size="lg" />
               ) : (
-                <div className="space-y-1">
+                <div className="divide-y divide-gray-800">
                   {/* ETH Balance */}
                   {ethBalance && (
-                    <div className="flex items-center justify-between p-2 bg-[var(--crypto-dark)]/50 rounded-lg">
+                    <div className="flex items-center justify-between p-2">
                       <div className="flex items-center space-x-2">
                         <img
                           src="https://assets.coingecko.com/coins/images/279/small/ethereum.png"
@@ -451,7 +451,7 @@ export function Portfolio() {
 
                   {/* ERC-20 Token Balances (read on-chain) */}
                   {tokenBalances.map((token) => (
-                    <div key={token.address} className="flex items-center justify-between p-2 bg-[var(--crypto-dark)]/50 rounded-lg">
+                    <div key={token.address} className="flex items-center justify-between p-2">
                       <div className="flex items-center space-x-2">
                         <img
                           src={token.logo}

@@ -5,6 +5,11 @@
 /* Prevent white flash on page refresh */
 html {
   background-color: hsl(219, 39%, 11%);
+  scrollbar-width: none;
+}
+
+html::-webkit-scrollbar {
+  display: none;
 }
 
 html.light {
