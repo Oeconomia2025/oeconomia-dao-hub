@@ -89,12 +89,12 @@ export function Layout({ children }: LayoutProps) {
   const tokenPills = [
     {
       symbol: 'OEC',
-      logo: 'https://pub-37d61a7eb7ae45898b46702664710cb2.r2.dev/images/OEC%20Logo%20Square.png',
+      logo: 'https://pub-37d61a7eb7ae45898b46702664710cb2.r2.dev/With%20Border/OEC%20Border.png',
       price: '$7.37',
     },
     {
       symbol: 'ELOQ',
-      logo: '/ecosystem/eloqura.png',
+      logo: 'https://pub-37d61a7eb7ae45898b46702664710cb2.r2.dev/With%20Border/ELOQ%20Border.png',
       price: '$0.42',
     },
     {
@@ -104,7 +104,7 @@ export function Layout({ children }: LayoutProps) {
     },
     {
       symbol: 'ALUD',
-      logo: 'https://pub-37d61a7eb7ae45898b46702664710cb2.r2.dev/images/OEC%20Logo%20Square.png',
+      logo: 'https://pub-37d61a7eb7ae45898b46702664710cb2.r2.dev/With%20Border/ALUD%20Dollar.png',
       price: '$1.00',
     },
   ];

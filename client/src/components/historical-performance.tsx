@@ -124,7 +124,7 @@ export function HistoricalPerformance({ contractAddress }: HistoricalPerformance
     };
 
     return (
-      <div className="flex items-center justify-between p-4 bg-crypto-dark/30 rounded-lg border border-crypto-border/20">
+      <div className="flex items-center justify-between p-3 bg-[#0d1219]/50 rounded-lg border border-gray-800/40">
         <div className="flex items-center space-x-3">
           <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
             colorClass || 'bg-crypto-blue/20'
@@ -143,7 +143,7 @@ export function HistoricalPerformance({ contractAddress }: HistoricalPerformance
   };
 
   return (
-    <Card className="crypto-card p-6 mb-0">
+    <Card className="p-4 border border-gray-800/60 bg-[#0b0f16] rounded-lg shadow-md shadow-black/50 relative overflow-hidden">
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center space-x-2">
           <Calendar className="w-5 h-5 text-crypto-purple" />
@@ -157,10 +157,10 @@ export function HistoricalPerformance({ contractAddress }: HistoricalPerformance
               variant={selectedPeriod === period.key ? "default" : "outline"}
               size="sm"
               onClick={() => setSelectedPeriod(period.key)}
-              className={selectedPeriod === period.key 
-                ? "bg-crypto-blue hover:bg-crypto-blue/80" 
-                : "border-crypto-border text-gray-400 hover:text-white hover:border-crypto-blue"
-              }
+              className={`rounded-lg ${selectedPeriod === period.key
+                ? "bg-cyan-600/80 text-white"
+                : "border-gray-700 bg-[#161b22] text-gray-400 hover:text-white hover:bg-[#1c2128]"
+              }`}
             >
               {period.label}
             </Button>
@@ -200,25 +200,26 @@ export function HistoricalPerformance({ contractAddress }: HistoricalPerformance
                     <stop offset="100%" stopColor="#3B82F6" stopOpacity={0.0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
                 <XAxis
                   dataKey="time"
-                  stroke="#9CA3AF"
-                  fontSize={12}
-                  tick={{ fill: '#9CA3AF' }}
+                  stroke="#6b7280"
+                  fontSize={10}
+                  tickLine={false}
                 />
                 <YAxis
-                  stroke="#9CA3AF"
-                  fontSize={12}
-                  tick={{ fill: '#9CA3AF' }}
+                  stroke="#6b7280"
+                  fontSize={10}
+                  tickLine={false}
                   tickFormatter={(value) => `$${value.toFixed(3)}`}
                 />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: '#1F2937',
-                    border: '1px solid #374151',
-                    borderRadius: '8px',
-                    color: '#fff'
+                    backgroundColor: '#0d1219',
+                    border: '1px solid #1e2733',
+                    borderRadius: '6px',
+                    color: '#e6edf3',
+                    fontSize: '12px'
                   }}
                   formatter={(value: number) => [`$${value.toFixed(4)}`, 'Price']}
                 />

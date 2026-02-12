@@ -30,6 +30,7 @@ class LiveCoinWatchSyncService {
 
   async getStoredCoins() {
     try {
+      if (!db) return [];
       const result = await db.select().from(liveCoinWatchCoins);
       // Sort by market cap in descending order (highest first)
       return result.sort((a, b) => (b.cap || 0) - (a.cap || 0));

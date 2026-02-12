@@ -18,7 +18,7 @@ import {
   liveCoinWatchCoins
 } from "@shared/schema";
 import { db } from "./db";
-import { eq, and } from "drizzle-orm";
+import { eq, and, desc } from "drizzle-orm";
 import * as schema from "@shared/schema";
 
 
@@ -472,7 +472,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const tokenCode = contractToCodeMap[normalizedAddress];
       
-      if (tokenCode) {
+      if (tokenCode && db) {
         // Get real current price from Live Coin Watch database directly
         try {
           const liveCoinData = await db.select()
@@ -1042,10 +1042,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // PRODUCTION-READY: Database-only API endpoints for complete independence from Replit
-  
+
   // Get all coins from database cache
   app.get('/api/tokens/coins', async (req, res) => {
     try {
+      if (!db) {
+        return res.json({ coins: [] });
+      }
       const coins = await db
         .select()
         .from(schema.liveCoinWatchCoins)
@@ -1081,6 +1084,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get specific token from database cache
   app.get('/api/tokens/:token', async (req, res) => {
     try {
+      if (!db) {
+        return res.status(503).json({ error: 'Database not available' });
+      }
       const { token } = req.params;
       const tokenData = await db
         .select()
@@ -1123,8 +1129,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get historical data from database cache
   app.get('/api/tokens/historical/:token/:timeframe', async (req, res) => {
     try {
+      if (!db) {
+        return res.json([]);
+      }
       const { token, timeframe } = req.params;
-      
+
+      // Limit query to recent data based on timeframe
+      const maxRecords = timeframe === '1H' ? 60 : timeframe === '1D' ? 200 : timeframe === '7D' ? 300 : 500;
+
       const historicalData = await db
         .select()
         .from(schema.priceHistoryData)
@@ -1132,9 +1144,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
           eq(schema.priceHistoryData.tokenCode, token),
           eq(schema.priceHistoryData.timeframe, timeframe)
         ))
-        .orderBy(schema.priceHistoryData.timestamp);
+        .orderBy(desc(schema.priceHistoryData.timestamp))
+        .limit(maxRecords);
 
-      const formattedData = historicalData.map(record => ({
+      // Reverse to chronological order
+      const formattedData = historicalData.reverse().map(record => ({
         timestamp: record.timestamp,
         price: parseFloat(record.price.toString()),
         date: new Date(record.timestamp).toISOString()

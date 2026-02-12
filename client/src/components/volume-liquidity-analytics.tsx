@@ -63,7 +63,7 @@ export function VolumeLiquidityAnalytics({ contractAddress }: VolumeLiquidityAna
 
   if (isVolumeLoading) {
     return (
-      <Card className="crypto-card mt-8">
+      <Card className="border border-gray-800/60 bg-[#0b0f16] rounded-lg shadow-md shadow-black/50 relative overflow-hidden">
         <CardHeader>
           <CardTitle className="text-white flex items-center">
             <Activity className="w-5 h-5 mr-2" />
@@ -91,8 +91,8 @@ export function VolumeLiquidityAnalytics({ contractAddress }: VolumeLiquidityAna
               onClick={() => setTimeframe(period)}
               className={`px-3 py-1 rounded text-sm transition-colors ${
                 timeframe === period
-                  ? 'bg-crypto-blue text-white'
-                  : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                  ? 'bg-cyan-600/80 text-white shadow-sm'
+                  : 'bg-[#161b22] text-gray-400 hover:text-gray-200 hover:bg-gray-700/40'
               }`}
             >
               {period}
@@ -154,24 +154,25 @@ export function VolumeLiquidityAnalytics({ contractAddress }: VolumeLiquidityAna
             <div className="h-64">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={data}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
                   <XAxis
                     dataKey="date"
-                    stroke="#9CA3AF"
-                    fontSize={11}
+                    stroke="#6b7280"
+                    fontSize={10}
                     tickFormatter={(value) => new Date(value).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                   />
                   <YAxis
-                    stroke="#9CA3AF"
-                    fontSize={11}
+                    stroke="#6b7280"
+                    fontSize={10}
                     tickFormatter={(value) => `$${(value / 1000000).toFixed(1)}M`}
                   />
                   <Tooltip
                     contentStyle={{
-                      backgroundColor: '#1F2937',
-                      border: '1px solid #374151',
-                      borderRadius: '8px',
-                      color: '#F9FAFB'
+                      backgroundColor: '#0d1219',
+                      border: '1px solid #1e2733',
+                      borderRadius: '6px',
+                      color: '#e6edf3',
+                      fontSize: '12px'
                     }}
                     cursor={false}
                     formatter={(value: number) => [`$${(value / 1000000).toFixed(2)}M`, 'Volume']}
@@ -189,24 +190,25 @@ export function VolumeLiquidityAnalytics({ contractAddress }: VolumeLiquidityAna
             <div className="h-64">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={data}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
                   <XAxis
                     dataKey="date"
-                    stroke="#9CA3AF"
-                    fontSize={11}
+                    stroke="#6b7280"
+                    fontSize={10}
                     tickFormatter={(value) => new Date(value).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                   />
                   <YAxis
-                    stroke="#9CA3AF"
-                    fontSize={11}
+                    stroke="#6b7280"
+                    fontSize={10}
                     tickFormatter={(value) => `$${(value / 1000000).toFixed(1)}M`}
                   />
                   <Tooltip
                     contentStyle={{
-                      backgroundColor: '#1F2937',
-                      border: '1px solid #374151',
-                      borderRadius: '8px',
-                      color: '#F9FAFB'
+                      backgroundColor: '#0d1219',
+                      border: '1px solid #1e2733',
+                      borderRadius: '6px',
+                      color: '#e6edf3',
+                      fontSize: '12px'
                     }}
                     formatter={(value: number) => [`$${(value / 1000000).toFixed(2)}M`, 'Liquidity']}
                     labelFormatter={(label) => new Date(label).toLocaleDateString()}

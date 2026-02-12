@@ -38,16 +38,19 @@ export interface IStorage {
 export class DatabaseStorage implements IStorage {
   // User methods (existing interface)
   async getUser(id: string): Promise<User | undefined> {
+    if (!db) return undefined;
     const [user] = await db.select().from(users).where(eq(users.id, id));
     return user || undefined;
   }
 
   async getUserByUsername(username: string): Promise<User | undefined> {
+    if (!db) return undefined;
     const [user] = await db.select().from(users).where(eq(users.username, username));
     return user || undefined;
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
+    if (!db) throw new Error("Database not available");
     const id = randomUUID();
     const [user] = await db
       .insert(users)
@@ -58,6 +61,7 @@ export class DatabaseStorage implements IStorage {
 
   // Token methods
   async getTrackedToken(contractAddress: string): Promise<TrackedToken | undefined> {
+    if (!db) return undefined;
     const [token] = await db
       .select()
       .from(trackedTokens)
@@ -66,6 +70,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createTrackedToken(token: InsertTrackedToken): Promise<TrackedToken> {
+    if (!db) throw new Error("Database not available");
     const [newToken] = await db
       .insert(trackedTokens)
       .values(token)
@@ -74,6 +79,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async updateTrackedToken(id: number, updates: Partial<InsertTrackedToken>): Promise<TrackedToken | undefined> {
+    if (!db) return undefined;
     const [updatedToken] = await db
       .update(trackedTokens)
       .set({ ...updates, updatedAt: new Date() })
@@ -83,6 +89,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getAllTrackedTokens(): Promise<TrackedToken[]> {
+    if (!db) return [];
     return await db
       .select()
       .from(trackedTokens)
@@ -90,6 +97,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createTokenSnapshot(snapshot: InsertTokenSnapshot): Promise<TokenSnapshot> {
+    if (!db) throw new Error("Database not available");
     const [newSnapshot] = await db
       .insert(tokenSnapshots)
       .values(snapshot)
@@ -98,6 +106,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getTokenSnapshots(tokenId: number, limit: number = 100): Promise<TokenSnapshot[]> {
+    if (!db) return [];
     return await db
       .select()
       .from(tokenSnapshots)
@@ -107,6 +116,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getUserWatchlist(userAddress: string): Promise<UserWatchlist[]> {
+    if (!db) return [];
     return await db
       .select()
       .from(userWatchlists)
@@ -114,6 +124,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async addToWatchlist(watchlist: InsertUserWatchlist): Promise<UserWatchlist> {
+    if (!db) throw new Error("Database not available");
     const [newWatchlist] = await db
       .insert(userWatchlists)
       .values(watchlist)
@@ -122,6 +133,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async removeFromWatchlist(userAddress: string, tokenId: number): Promise<boolean> {
+    if (!db) return false;
     const result = await db
       .delete(userWatchlists)
       .where(

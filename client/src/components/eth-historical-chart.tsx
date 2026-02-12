@@ -7,7 +7,8 @@ import {
   XAxis, 
   YAxis, 
   Tooltip, 
-  ReferenceLine 
+  ReferenceLine,
+  CartesianGrid
 } from "recharts";
 import { getTokenColor, getChartGradientId } from "@/utils/token-colors";
 import { Button } from "@/components/ui/button";
@@ -149,7 +150,7 @@ export function ETHHistoricalChart() {
 
   if (!priceHistory || priceHistory.length === 0) {
     return (
-      <div className="bg-crypto-card p-8 rounded-lg border border-crypto-border">
+      <div className="bg-[#0b0f16] p-4 rounded-lg border border-gray-800/60 shadow-md shadow-black/50 relative overflow-hidden">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center">
             <img 
@@ -165,10 +166,10 @@ export function ETHHistoricalChart() {
                 variant={timeframe === tf.key ? "default" : "outline"}
                 size="sm"
                 onClick={() => setTimeframe(tf.key)}
-                className={timeframe === tf.key 
-                  ? "bg-crypto-blue text-white border-crypto-blue" 
-                  : "border-gray-600 text-gray-400 hover:text-white hover:border-gray-400"
-                }
+                className={`rounded-lg ${timeframe === tf.key
+                  ? "bg-cyan-600/80 text-white border-cyan-600/80"
+                  : "border-gray-700 bg-[#161b22] text-gray-400 hover:text-white hover:bg-[#1c2128]"
+                }`}
                 disabled
               >
                 {tf.label}
@@ -224,7 +225,7 @@ export function ETHHistoricalChart() {
       ) : (
         <div className="h-80">
           <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={priceHistory} margin={{ top: 20, right: 20, bottom: 5, left: 20 }}>
+            <AreaChart data={priceHistory} margin={{ top: 10, right: 5, bottom: 5, left: -15 }}>
               <defs>
                 <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
                   <stop offset="0%" stopColor={tokenColor} stopOpacity={1.0}/>
@@ -236,12 +237,12 @@ export function ETHHistoricalChart() {
                   <stop offset="100%" stopColor="#1F2937" stopOpacity={0.1}/>
                 </linearGradient>
               </defs>
-              <rect x="0" y="0" width="100%" height="100%" fill="url(#chartBackground)" />
+              <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
               <XAxis 
                 dataKey="timestamp" 
                 tickFormatter={formatXAxis}
-                stroke="#9CA3AF"
-                fontSize={12}
+                stroke="#6b7280"
+                fontSize={10}
               />
               <YAxis 
                 domain={['dataMin * 0.99', 'dataMax * 1.01']}
@@ -253,8 +254,8 @@ export function ETHHistoricalChart() {
                   if (value >= 1) return `$${value.toFixed(2)}`;
                   return `$${value.toFixed(4)}`;
                 }}
-                stroke="#9CA3AF"
-                fontSize={12}
+                stroke="#6b7280"
+                fontSize={10}
                 tickMargin={12}
               />
               <Tooltip 
@@ -281,10 +282,11 @@ export function ETHHistoricalChart() {
                   return date.toLocaleString();
                 }}
                 contentStyle={{
-                  backgroundColor: 'var(--crypto-card)',
-                  border: '1px solid var(--crypto-border)',
-                  borderRadius: '8px',
-                  color: 'white'
+                  backgroundColor: '#0d1219',
+                  border: '1px solid #1e2733',
+                  borderRadius: '6px',
+                  color: '#e6edf3',
+                  fontSize: '12px'
                 }}
               />
               <Area 

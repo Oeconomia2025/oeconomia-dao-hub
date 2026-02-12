@@ -70,8 +70,8 @@ export function TransactionsTable({ contractAddress }: TransactionsTableProps) {
   };
 
   return (
-    <div className="mt-8">
-      <Card className="crypto-card p-6 border">
+    <div>
+      <Card className="p-4 border border-gray-800/60 bg-[#0b0f16] rounded-lg shadow-md shadow-black/50 relative overflow-hidden">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl font-semibold">Recent Transactions</h2>
           <a 

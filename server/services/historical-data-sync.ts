@@ -132,6 +132,7 @@ class HistoricalDataSyncService {
 
   async getHistoricalData(tokenCode: string, timeframe: string, limit: number = 100): Promise<any[]> {
     try {
+      if (!db) return [];
       const records = await db
         .select()
         .from(priceHistoryData)
@@ -156,6 +157,7 @@ class HistoricalDataSyncService {
 
   async getHistoricalDataByContract(contractAddress: string, timeframe: string, limit: number = 100): Promise<any[]> {
     try {
+      if (!db) return [];
       const records = await db
         .select()
         .from(priceHistoryData)

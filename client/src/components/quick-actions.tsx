@@ -16,8 +16,8 @@ export function QuickActions({ contractAddress }: QuickActionsProps) {
 
   return (
     <>
-      <div className="mt-8">
-        <Card className="crypto-card p-6 border">
+      <div>
+        <Card className="p-4 border border-gray-800/60 bg-[#0b0f16] rounded-lg shadow-md shadow-black/50 relative overflow-hidden">
           <h3 className="text-lg font-semibold mb-4">Quick Actions</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <Button

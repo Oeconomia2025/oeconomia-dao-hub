@@ -40,8 +40,8 @@ export function HolderStatistics({ contractAddress, tokenData }: HolderStatistic
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
-      <Card className="crypto-card p-6 border">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+      <Card className="p-4 border border-gray-800/60 bg-[#0b0f16] rounded-lg shadow-md shadow-black/50 relative overflow-hidden">
         <h3 className="text-lg font-semibold mb-4">Top Holders</h3>
         {isLoading ? (
           <div className="space-y-3">
@@ -83,7 +83,7 @@ export function HolderStatistics({ contractAddress, tokenData }: HolderStatistic
         )}
       </Card>
 
-      <Card className="crypto-card p-6 border">
+      <Card className="p-4 border border-gray-800/60 bg-[#0b0f16] rounded-lg shadow-md shadow-black/50 relative overflow-hidden">
         <h3 className="text-lg font-semibold mb-4">Distribution</h3>
         <div className="space-y-4">
           <div>

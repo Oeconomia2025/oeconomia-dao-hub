@@ -20,7 +20,7 @@ export function TokenInfoPanel({ tokenData, isLoading }: TokenInfoPanelProps) {
     return (
       <div className="space-y-6">
         {Array.from({ length: 3 }).map((_, i) => (
-          <Card key={i} className="crypto-card p-6">
+          <Card key={i} className="p-4 border border-gray-800/60 bg-[#0b0f16] rounded-lg">
             <Skeleton className="h-6 w-32 mb-4" />
             <div className="space-y-3">
               <Skeleton className="h-4 w-full" />
@@ -43,11 +43,11 @@ export function TokenInfoPanel({ tokenData, isLoading }: TokenInfoPanelProps) {
   const leadDevLockedWallet = "0xD02dbe54454F6FE3c2F9F1F096C5460284E418Ed";
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-3">
       {/* Fee Structure + ETH Network side by side */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
         {/* Fee Structure */}
-        <Card className="crypto-card p-6 border">
+        <Card className="p-4 border border-gray-800/60 bg-[#0b0f16] rounded-lg shadow-md shadow-black/50 relative overflow-hidden">
           <h3 className="text-lg font-semibold mb-4">Fee Structure</h3>
           <div className="space-y-3">
             <div className="flex justify-between items-center">
@@ -72,7 +72,7 @@ export function TokenInfoPanel({ tokenData, isLoading }: TokenInfoPanelProps) {
         </Card>
 
         {/* Network Status */}
-        <Card className="crypto-card p-6 border">
+        <Card className="p-4 border border-gray-800/60 bg-[#0b0f16] rounded-lg shadow-md shadow-black/50 relative overflow-hidden">
           <h3 className="text-lg font-semibold mb-4">ETH Network</h3>
           {networkStatus ? (
             <div className="space-y-3">
@@ -104,7 +104,7 @@ export function TokenInfoPanel({ tokenData, isLoading }: TokenInfoPanelProps) {
       </div>
 
       {/* Contract Information */}
-      <Card className="crypto-card p-6 border">
+      <Card className="p-4 border border-gray-800/60 bg-[#0b0f16] rounded-lg shadow-md shadow-black/50 relative overflow-hidden">
         <h3 className="text-lg font-semibold mb-4">Contract Information</h3>
         <div className="space-y-2">
           {[

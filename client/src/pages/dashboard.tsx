@@ -86,24 +86,15 @@ export default function Dashboard() {
 
   return (
     <Layout>
-      <div className="p-8">
-        <div className="max-w-7xl mx-auto">
+      <div className="p-4 md:p-5" style={{ background: 'linear-gradient(180deg, #080c12 0%, #0a0e15 50%, #090d13 100%)' }}>
+        <div className="max-w-7xl mx-auto space-y-3">
           {/* Token Overview Cards - Use Live Data */}
           {isEthLoading ? <LoadingSpinner /> : <TokenOverview tokenData={defaultTokenData} />}
 
-  <div className="grid grid-cols-1 gap-8">
-    {/* Charts block (full width) */}
-    <div>
-            <ETHHistoricalChart />
-
-            {/* Volume and Liquidity Analytics */}
-            <VolumeLiquidityAnalytics contractAddress={contractAddress} />
-
-            {/* Historical Performance Charts */}
-            <HistoricalPerformance contractAddress={contractAddress} />
-          </div>
-
-          </div>
+          {/* Charts block */}
+          <ETHHistoricalChart />
+          <VolumeLiquidityAnalytics contractAddress={contractAddress} />
+          <HistoricalPerformance contractAddress={contractAddress} />
 
           {/* Holder Statistics - above Token Info */}
           <HolderStatistics contractAddress={contractAddress} tokenData={defaultTokenData} />
