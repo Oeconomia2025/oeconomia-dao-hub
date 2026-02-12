@@ -12,6 +12,7 @@ import Dashboard from "@/pages/dashboard";
 import { Portfolio } from "@/pages/portfolio";
 import Analytics from "@/pages/analytics";
 import Governance from "@/pages/governance";
+import Ecosystem from "@/pages/ecosystem";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -22,6 +23,7 @@ function Router() {
       <Route path="/analytics" component={Analytics} />
       <Route path="/portfolio" component={Portfolio} />
       <Route path="/governance" component={Governance} />
+      <Route path="/ecosystem/:protocol?" component={Ecosystem} />
       <Route component={NotFound} />
     </Switch>
   );

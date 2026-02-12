@@ -13,7 +13,8 @@ import {
   Globe,
   AlertTriangle,
   Heart,
-  Vote
+  Vote,
+  Layers
 } from "lucide-react";
 import { SiX, SiMedium, SiYoutube, SiDiscord, SiGithub, SiTelegram } from "react-icons/si";
 import { WalletConnect } from "@/components/wallet-connect";
@@ -83,6 +84,7 @@ export function Layout({ children }: LayoutProps) {
     { icon: BarChart3, label: 'Dashboard', path: '/', active: location === '/' || location === '/dashboard' },
     { icon: TrendingUp, label: 'Analytics', path: '/analytics', active: location === '/analytics' },
     { icon: Wallet, label: 'Portfolio', path: '/portfolio', active: location === '/portfolio' },
+    { icon: Layers, label: 'Ecosystem', path: '/ecosystem', active: location.startsWith('/ecosystem') },
     { icon: Vote, label: 'Governance', path: '/governance', active: location === '/governance' },
   ];
 
@@ -276,7 +278,7 @@ export function Layout({ children }: LayoutProps) {
           </button>
 
           {/* Connect Wallet */}
-          <WalletConnect />
+          <WalletConnect collapsed={sidebarCollapsed} />
         </div>
       </aside>
 
