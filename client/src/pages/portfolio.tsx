@@ -136,10 +136,10 @@ export function Portfolio() {
   if (!isConnected) {
     return (
       <Layout>
-        <div className="p-8">
+        <div className="p-4 md:p-5" style={{ background: 'linear-gradient(180deg, #080c12 0%, #0a0e15 50%, #090d13 100%)' }}>
           <div className="max-w-7xl mx-auto">
             <div className="text-center py-16">
-              <Wallet className="w-16 h-16 text-crypto-blue mx-auto mb-6" />
+              <Wallet className="w-16 h-16 text-cyan-400 mx-auto mb-6" />
               <p className="text-gray-400 mb-8">Connect your wallet to view your token portfolio</p>
               <div className="max-w-xs mx-auto">
                 <WalletConnect />
@@ -154,106 +154,87 @@ export function Portfolio() {
 
   return (
     <Layout>
-      <div className="p-8">
-        <div className="max-w-7xl mx-auto">
+      <div className="p-4 md:p-5" style={{ background: 'linear-gradient(180deg, #080c12 0%, #0a0e15 50%, #090d13 100%)' }}>
+        <div className="max-w-7xl mx-auto space-y-3">
         {/* Portfolio Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <Card className="p-6 border bg-gradient-to-br from-gray-950 via-gray-950 to-black border-gray-700 hover:border-gray-600 transition-all duration-300 shadow-xl shadow-black/70 relative overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-transparent pointer-events-none"></div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+          <Card className="p-4 border border-gray-800/60 bg-[#0b0f16] hover:border-gray-700 transition-all duration-200 shadow-md shadow-black/50 rounded-lg relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-white/[0.04] via-white/[0.01] to-transparent pointer-events-none" />
             <div className="relative z-10">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-gray-200 text-sm font-medium">Portfolio Overview</h3>
-                <PieChart className="text-gray-300 w-5 h-5" />
-              </div>
-              <div className="text-2xl font-bold text-white drop-shadow-sm">
-                Dashboard
-              </div>
-              <div className="text-sm text-gray-400 mt-2">
-                Track your DeFi positions
-              </div>
+              <p className="text-gray-400 text-xs font-medium mb-2 uppercase tracking-wide">Portfolio Overview</p>
+              <div className="text-2xl font-bold text-white">Dashboard</div>
+              <div className="text-xs text-gray-500 mt-1">Track your DeFi positions</div>
             </div>
           </Card>
 
-          <Card className="p-6 border bg-gradient-to-br from-gray-950 via-gray-950 to-black border-gray-700 hover:border-gray-600 transition-all duration-300 shadow-xl shadow-black/70 relative overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-transparent pointer-events-none"></div>
+          <Card className="p-4 border border-gray-800/60 bg-[#0b0f16] hover:border-gray-700 transition-all duration-200 shadow-md shadow-black/50 rounded-lg relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-white/[0.04] via-white/[0.01] to-transparent pointer-events-none" />
             <div className="relative z-10">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-gray-200 text-sm font-medium">Wallet Address</h3>
-                <Wallet className="text-gray-300 w-5 h-5" />
-              </div>
-              <div className="text-2xl font-bold text-white drop-shadow-sm">
+              <p className="text-gray-400 text-xs font-medium mb-2 uppercase tracking-wide">Wallet Address</p>
+              <div className="text-2xl font-bold text-white">
                 {address ? formatAddress(address) : '---'}
               </div>
-              <div className="text-sm text-gray-400 mt-2">
-                <span 
-                  className="cursor-pointer hover:text-crypto-blue"
+              <div className="text-xs text-gray-500 mt-1">
+                <span
+                  className="cursor-pointer hover:text-cyan-400 transition-colors"
                   onClick={() => {
                     if (address) {
                       window.open(`https://bscscan.com/address/${address}`, '_blank')
                     }
                   }}
                 >
-                  View on BSCScan <ExternalLink className="w-3 h-3 ml-1 inline" />
+                  View on BSCScan <ExternalLink className="w-3 h-3 ml-0.5 inline" />
                 </span>
               </div>
             </div>
           </Card>
 
-          <Card className="p-6 border bg-gradient-to-br from-gray-950 via-gray-950 to-black border-gray-700 hover:border-gray-600 transition-all duration-300 shadow-xl shadow-black/70 relative overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-transparent pointer-events-none"></div>
+          <Card className="p-4 border border-gray-800/60 bg-[#0b0f16] hover:border-gray-700 transition-all duration-200 shadow-md shadow-black/50 rounded-lg relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-white/[0.04] via-white/[0.01] to-transparent pointer-events-none" />
             <div className="relative z-10">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-gray-200 text-sm font-medium">Assets Tracked</h3>
-                <PieChart className="text-gray-300 w-5 h-5" />
-              </div>
-              <div className="text-2xl font-bold text-white drop-shadow-sm">
+              <p className="text-gray-400 text-xs font-medium mb-2 uppercase tracking-wide">Assets Tracked</p>
+              <div className="text-2xl font-bold text-white">
                 {(tokenBalances?.length || 0) + 1}
               </div>
-              <div className="text-sm text-gray-400 mt-2">
-                Including BNB
-              </div>
+              <div className="text-xs text-gray-500 mt-1">Including BNB</div>
             </div>
           </Card>
 
-          {/* Fourth card to match 4-column layout */}
-          <Card className="p-6 border bg-gradient-to-br from-gray-950 via-gray-950 to-black border-gray-700 hover:border-gray-600 transition-all duration-300 shadow-xl shadow-black/70 relative overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-transparent pointer-events-none"></div>
+          <Card className="p-4 border border-gray-800/60 bg-[#0b0f16] hover:border-gray-700 transition-all duration-200 shadow-md shadow-black/50 rounded-lg relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-white/[0.04] via-white/[0.01] to-transparent pointer-events-none" />
             <div className="relative z-10">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-gray-200 text-sm font-medium">DeFi Positions</h3>
-                <TrendingUp className="text-gray-300 w-5 h-5" />
-              </div>
-              <div className="text-2xl font-bold text-white drop-shadow-sm">
+              <p className="text-gray-400 text-xs font-medium mb-2 uppercase tracking-wide">DeFi Positions</p>
+              <div className="text-2xl font-bold text-white">
                 {poolsFarms.length}
               </div>
-              <div className="text-sm text-gray-400 mt-2">
-                Active pools & farms
-              </div>
+              <div className="text-xs text-gray-500 mt-1">Active pools & farms</div>
             </div>
           </Card>
         </div>
 
         {/* Token Holdings */}
-        <Card className="crypto-card p-6 border mb-8">
-          <div 
-            className="flex items-center justify-between mb-6 cursor-pointer hover:bg-gray-800/30 -m-2 p-2 rounded-lg transition-colors"
+        <Card className="border border-gray-800/60 bg-[#0b0f16] rounded-lg shadow-md shadow-black/50 relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-white/[0.03] via-white/[0.01] to-transparent pointer-events-none" />
+          <div className="relative z-10 p-5">
+          <div
+            className="flex items-center justify-between mb-4 cursor-pointer hover:bg-gray-800/30 -m-2 p-2 rounded-lg transition-colors"
             onClick={() => setHoldingsExpanded(!holdingsExpanded)}
           >
             <div className="flex items-center space-x-3">
-              <h2 className="text-xl font-semibold">Holdings</h2>
+              <h2 className="text-sm font-semibold text-gray-300 uppercase tracking-wide">Holdings</h2>
               {holdingsExpanded ? (
-                <ChevronUp className="w-5 h-5 text-gray-400" />
+                <ChevronUp className="w-4 h-4 text-gray-500" />
               ) : (
-                <ChevronDown className="w-5 h-5 text-gray-400" />
+                <ChevronDown className="w-4 h-4 text-gray-500" />
               )}
             </div>
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               size="sm"
-              className="border-crypto-blue/30 text-crypto-blue hover:bg-crypto-blue/10"
+              className="border-gray-700 bg-[#161b22] text-gray-300 hover:bg-[#1c2128] hover:text-white text-xs rounded-lg"
               onClick={(e) => e.stopPropagation()}
             >
-              <Plus className="w-4 h-4 mr-2" />
+              <Plus className="w-3 h-3 mr-1.5" />
               Add Token
             </Button>
           </div>
@@ -331,18 +312,21 @@ export function Portfolio() {
               )}
             </div>
           )}
+          </div>
         </Card>
 
         {/* Pools & Farms */}
-        <Card className="crypto-card p-6 border mb-8">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-semibold">Pools & Farms</h2>
-            <Button 
-              variant="outline" 
+        <Card className="border border-gray-800/60 bg-[#0b0f16] rounded-lg shadow-md shadow-black/50 relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-white/[0.03] via-white/[0.01] to-transparent pointer-events-none" />
+          <div className="relative z-10 p-5">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-sm font-semibold text-gray-300 uppercase tracking-wide">Pools & Farms</h2>
+            <Button
+              variant="outline"
               size="sm"
-              className="border-crypto-blue/30 text-crypto-blue hover:bg-crypto-blue/10"
+              className="border-gray-700 bg-[#161b22] text-gray-300 hover:bg-[#1c2128] hover:text-white text-xs rounded-lg"
             >
-              <Plus className="w-4 h-4 mr-2" />
+              <Plus className="w-3 h-3 mr-1.5" />
               Add Position
             </Button>
           </div>
@@ -445,13 +429,14 @@ export function Portfolio() {
 
             {poolsFarms.length === 0 && (
               <div className="text-center py-8">
-                <Droplets className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                <Droplets className="w-12 h-12 text-gray-600 mx-auto mb-4" />
                 <p className="text-gray-400 mb-2">No DeFi positions found</p>
                 <p className="text-sm text-gray-500">
                   Add liquidity or stake tokens to see your pools and farms here
                 </p>
               </div>
             )}
+          </div>
           </div>
         </Card>
         </div>

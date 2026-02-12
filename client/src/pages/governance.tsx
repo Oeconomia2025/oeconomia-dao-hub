@@ -277,10 +277,10 @@ export function Governance() {
   if (!isConnected) {
     return (
       <Layout>
-        <div className="p-8">
+        <div className="p-4 md:p-5" style={{ background: 'linear-gradient(180deg, #080c12 0%, #0a0e15 50%, #090d13 100%)' }}>
           <div className="max-w-7xl mx-auto">
             <div className="text-center py-16">
-              <Vote className="w-16 h-16 text-crypto-blue mx-auto mb-6" />
+              <Vote className="w-16 h-16 text-cyan-400 mx-auto mb-6" />
               <p className="text-gray-400 mb-8">Connect your wallet to participate in Oeconomia governance</p>
               <div className="max-w-xs mx-auto">
                 <WalletConnect />
@@ -295,135 +295,107 @@ export function Governance() {
 
   return (
     <Layout>
-      <div className="p-8">
-        <div className="max-w-7xl mx-auto">
+      <div className="p-4 md:p-5" style={{ background: 'linear-gradient(180deg, #080c12 0%, #0a0e15 50%, #090d13 100%)' }}>
+        <div className="max-w-7xl mx-auto space-y-3">
           {/* Governance Stats Overview */}
-          <div className="grid grid-cols-1 md:grid-cols-6 gap-3 mb-8">
-            <Card className="p-6 border bg-gradient-to-br from-gray-950 via-gray-950 to-black border-gray-700 hover:border-gray-600 transition-all duration-300 shadow-xl shadow-black/70 relative overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-transparent pointer-events-none"></div>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2">
+            <Card className="p-4 border border-gray-800/60 bg-[#0b0f16] hover:border-gray-700 transition-all duration-200 shadow-md shadow-black/50 rounded-lg relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-white/[0.04] via-white/[0.01] to-transparent pointer-events-none" />
               <div className="relative z-10">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-gray-200 text-sm font-medium">Total Proposals</h3>
-                  <FileText className="text-gray-300 w-5 h-5" />
-                </div>
-                <div className="text-2xl font-bold text-white drop-shadow-sm">
-                  {mockStats.totalProposals}
-                </div>
-                <div className="text-sm text-gray-400 mt-2">
-                  {mockStats.activeProposals} active
+                <p className="text-gray-400 text-xs font-medium mb-2 uppercase tracking-wide">Total Proposals</p>
+                <div className="text-2xl font-bold text-white">{mockStats.totalProposals}</div>
+                <div className="text-xs text-gray-500 mt-1">{mockStats.activeProposals} active</div>
+              </div>
+            </Card>
+
+            <Card className="p-4 border border-gray-800/60 bg-[#0b0f16] hover:border-gray-700 transition-all duration-200 shadow-md shadow-black/50 rounded-lg relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-white/[0.04] via-white/[0.01] to-transparent pointer-events-none" />
+              <div className="relative z-10">
+                <p className="text-gray-400 text-xs font-medium mb-2 uppercase tracking-wide">Voting Power</p>
+                <div className="text-2xl font-bold text-white">{formatNumber(mockStats.totalVotingPower)}</div>
+                <div className="text-xs text-gray-500 mt-1">{formatNumber(userVotingPower)} yours</div>
+              </div>
+            </Card>
+
+            <Card className="p-4 border border-gray-800/60 bg-[#0b0f16] hover:border-gray-700 transition-all duration-200 shadow-md shadow-black/50 rounded-lg relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-white/[0.04] via-white/[0.01] to-transparent pointer-events-none" />
+              <div className="relative z-10">
+                <p className="text-gray-400 text-xs font-medium mb-2 uppercase tracking-wide">Participation</p>
+                <div className="flex items-end justify-between">
+                  <span className="text-2xl font-bold text-white">{mockStats.participationRate}%</span>
+                  <span className="text-xs font-semibold flex items-center gap-0.5 px-1.5 py-0.5 rounded text-emerald-400 bg-emerald-500/10">+3.2%</span>
                 </div>
               </div>
             </Card>
 
-            <Card className="p-6 border bg-gradient-to-br from-gray-950 via-gray-950 to-black border-gray-700 hover:border-gray-600 transition-all duration-300 shadow-xl shadow-black/70 relative overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-transparent pointer-events-none"></div>
+            <Card className="p-4 border border-gray-800/60 bg-[#0b0f16] hover:border-gray-700 transition-all duration-200 shadow-md shadow-black/50 rounded-lg relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-white/[0.04] via-white/[0.01] to-transparent pointer-events-none" />
               <div className="relative z-10">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-gray-200 text-sm font-medium">Voting Power</h3>
-                  <Vote className="text-gray-300 w-5 h-5" />
-                </div>
-                <div className="text-2xl font-bold text-white drop-shadow-sm">
-                  {formatNumber(mockStats.totalVotingPower)}
-                </div>
-                <div className="text-sm text-gray-400 mt-2">
-                  {formatNumber(userVotingPower)} yours
-                </div>
+                <p className="text-gray-400 text-xs font-medium mb-2 uppercase tracking-wide">Treasury</p>
+                <div className="text-2xl font-bold text-white">{mockStats.treasuryValue}</div>
+                <div className="text-xs text-cyan-400 mt-1">Diversified</div>
               </div>
             </Card>
 
-            <Card className="p-6 border bg-gradient-to-br from-gray-950 via-gray-950 to-black border-gray-700 hover:border-gray-600 transition-all duration-300 shadow-xl shadow-black/70 relative overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-transparent pointer-events-none"></div>
+            <Card className="p-4 border border-gray-800/60 bg-[#0b0f16] hover:border-gray-700 transition-all duration-200 shadow-md shadow-black/50 rounded-lg relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-white/[0.04] via-white/[0.01] to-transparent pointer-events-none" />
               <div className="relative z-10">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-gray-200 text-sm font-medium">Participation</h3>
-                  <Activity className="text-gray-300 w-5 h-5" />
-                </div>
-                <div className="text-2xl font-bold text-white drop-shadow-sm">
-                  {mockStats.participationRate}%
-                </div>
-                <div className="text-sm text-green-300 mt-2">
-                  +3.2% this month
-                </div>
+                <p className="text-gray-400 text-xs font-medium mb-2 uppercase tracking-wide">Delegates</p>
+                <div className="text-2xl font-bold text-white">{mockStats.activeDelegates}</div>
+                <div className="text-xs text-gray-500 mt-1">Active participants</div>
               </div>
             </Card>
 
-            <Card className="p-6 border bg-gradient-to-br from-gray-950 via-gray-950 to-black border-gray-700 hover:border-gray-600 transition-all duration-300 shadow-xl shadow-black/70 relative overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-transparent pointer-events-none"></div>
+            <Card className="p-4 border border-gray-800/60 bg-[#0b0f16] hover:border-gray-700 transition-all duration-200 shadow-md shadow-black/50 rounded-lg relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-white/[0.04] via-white/[0.01] to-transparent pointer-events-none" />
               <div className="relative z-10">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-gray-200 text-sm font-medium">Treasury</h3>
-                  <Coins className="text-gray-300 w-5 h-5" />
-                </div>
-                <div className="text-2xl font-bold text-white drop-shadow-sm">
-                  {mockStats.treasuryValue}
-                </div>
-                <div className="text-sm text-blue-300 mt-2">
-                  Diversified
-                </div>
-              </div>
-            </Card>
-
-            <Card className="p-6 border bg-gradient-to-br from-gray-950 via-gray-950 to-black border-gray-700 hover:border-gray-600 transition-all duration-300 shadow-xl shadow-black/70 relative overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-transparent pointer-events-none"></div>
-              <div className="relative z-10">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-gray-200 text-sm font-medium">Delegates</h3>
-                  <Users className="text-gray-300 w-5 h-5" />
-                </div>
-                <div className="text-2xl font-bold text-white drop-shadow-sm">
-                  {mockStats.activeDelegates}
-                </div>
-                <div className="text-sm text-gray-400 mt-2">
-                  Active participants
-                </div>
-              </div>
-            </Card>
-
-            <Card className="p-6 border bg-gradient-to-br from-gray-950 via-gray-950 to-black border-gray-700 hover:border-gray-600 transition-all duration-300 shadow-xl shadow-black/70 relative overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-transparent pointer-events-none"></div>
-              <div className="relative z-10">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-gray-200 text-sm font-medium">Your Status</h3>
-                  <User className="text-gray-300 w-5 h-5" />
-                </div>
-                <div className="text-lg font-bold text-white drop-shadow-sm">
+                <p className="text-gray-400 text-xs font-medium mb-2 uppercase tracking-wide">Your Status</p>
+                <div className="text-lg font-bold text-white">
                   {userDelegatedTo ? "Delegated" : "Self-voting"}
                 </div>
-                <div className="text-sm text-gray-400 mt-2">
-                  {formatNumber(userVotingPower)} power
-                </div>
+                <div className="text-xs text-gray-500 mt-1">{formatNumber(userVotingPower)} power</div>
               </div>
             </Card>
           </div>
 
           {/* Main Governance Interface */}
           <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <div className="flex justify-between items-center mb-6">
-              <TabsList className="grid w-auto grid-cols-4 bg-gray-800 border border-gray-700">
-                <TabsTrigger value="proposals">Proposals</TabsTrigger>
-                <TabsTrigger value="delegates">Delegates</TabsTrigger>
-                <TabsTrigger value="voting">My Votes</TabsTrigger>
-                <TabsTrigger value="analytics">Analytics</TabsTrigger>
-              </TabsList>
-              
-              <Button 
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-3">
+              <div className="flex gap-1 bg-[#161b22] rounded-lg p-0.5 border border-gray-800/60">
+                {["proposals", "delegates", "voting", "analytics"].map((tab) => (
+                  <button
+                    key={tab}
+                    onClick={() => setActiveTab(tab)}
+                    className={`px-3 py-1 rounded text-xs font-medium transition-all duration-150 capitalize ${
+                      activeTab === tab
+                        ? "bg-cyan-600/80 text-white shadow-sm"
+                        : "text-gray-400 hover:text-gray-200 hover:bg-gray-700/40"
+                    }`}
+                  >
+                    {tab === "voting" ? "My Votes" : tab}
+                  </button>
+                ))}
+              </div>
+
+              <Button
                 onClick={() => setShowCreateProposal(true)}
-                className="bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-600 hover:to-purple-700"
+                size="sm"
+                className="bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-600 hover:to-purple-700 text-xs"
               >
-                <Plus className="w-4 h-4 mr-2" />
+                <Plus className="w-3 h-3 mr-1.5" />
                 Create Proposal
               </Button>
             </div>
 
             {/* Proposals Tab */}
             <TabsContent value="proposals">
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
                 {/* Active Proposals */}
                 <div className="lg:col-span-2">
                   <div className="space-y-4">
                     <h3 className="text-lg font-semibold text-white mb-4">Active Proposals</h3>
                     {activeProposals.map((proposal) => (
-                      <Card key={proposal.id} className="crypto-card border cursor-pointer hover:border-gray-600 transition-all duration-300">
+                      <Card key={proposal.id} className="border border-gray-800/60 bg-[#0b0f16] rounded-lg shadow-md shadow-black/50 cursor-pointer hover:border-gray-700 transition-all duration-200">
                         <CardContent className="p-6">
                           <div className="flex items-start justify-between mb-4">
                             <div className="flex items-center space-x-3">
@@ -495,7 +467,7 @@ export function Governance() {
                       <h3 className="text-lg font-semibold text-white mb-4">Recent Decisions</h3>
                       <div className="space-y-3">
                         {passedProposals.slice(0, 3).map((proposal) => (
-                          <Card key={proposal.id} className="crypto-card border">
+                          <Card key={proposal.id} className="border border-gray-800/60 bg-[#0b0f16] rounded-lg shadow-md shadow-black/50">
                             <CardContent className="p-4">
                               <div className="flex items-center justify-between">
                                 <div className="flex items-center space-x-3">
@@ -520,9 +492,9 @@ export function Governance() {
                 </div>
 
                 {/* Sidebar */}
-                <div className="space-y-6">
+                <div className="space-y-3">
                   {/* User Delegation Status */}
-                  <Card className="crypto-card border">
+                  <Card className="border border-gray-800/60 bg-[#0b0f16] rounded-lg shadow-md shadow-black/50">
                     <CardHeader>
                       <CardTitle className="flex items-center space-x-2">
                         <UserCheck className="w-5 h-5" />
@@ -550,7 +522,7 @@ export function Governance() {
                   </Card>
 
                   {/* Quick Stats */}
-                  <Card className="crypto-card border">
+                  <Card className="border border-gray-800/60 bg-[#0b0f16] rounded-lg shadow-md shadow-black/50">
                     <CardHeader>
                       <CardTitle className="flex items-center space-x-2">
                         <BarChart3 className="w-5 h-5" />
@@ -578,7 +550,7 @@ export function Governance() {
                   </Card>
 
                   {/* Recent Activity */}
-                  <Card className="crypto-card border">
+                  <Card className="border border-gray-800/60 bg-[#0b0f16] rounded-lg shadow-md shadow-black/50">
                     <CardHeader>
                       <CardTitle className="flex items-center space-x-2">
                         <Activity className="w-5 h-5" />
@@ -612,9 +584,9 @@ export function Governance() {
 
             {/* Delegates Tab */}
             <TabsContent value="delegates">
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
                 {mockDelegates.map((delegate) => (
-                  <Card key={delegate.address} className="crypto-card border hover:border-gray-600 transition-all duration-300">
+                  <Card key={delegate.address} className="border border-gray-800/60 bg-[#0b0f16] rounded-lg shadow-md shadow-black/50 hover:border-gray-700 transition-all duration-200">
                     <CardContent className="p-6 flex flex-col h-full">
                       <div className="flex items-start justify-between mb-4">
                         <div>
@@ -678,7 +650,7 @@ export function Governance() {
 
             {/* My Votes Tab */}
             <TabsContent value="voting">
-              <Card className="crypto-card border">
+              <Card className="border border-gray-800/60 bg-[#0b0f16] rounded-lg shadow-md shadow-black/50">
                 <CardContent className="p-6">
                   <div className="text-center py-12">
                     <Vote className="w-16 h-16 text-gray-500 mx-auto mb-4" />
@@ -694,8 +666,8 @@ export function Governance() {
 
             {/* Analytics Tab */}
             <TabsContent value="analytics">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <Card className="crypto-card border">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+                <Card className="border border-gray-800/60 bg-[#0b0f16] rounded-lg shadow-md shadow-black/50">
                   <CardHeader>
                     <CardTitle>Proposal Success Rate</CardTitle>
                   </CardHeader>
@@ -707,7 +679,7 @@ export function Governance() {
                   </CardContent>
                 </Card>
 
-                <Card className="crypto-card border">
+                <Card className="border border-gray-800/60 bg-[#0b0f16] rounded-lg shadow-md shadow-black/50">
                   <CardHeader>
                     <CardTitle>Average Participation</CardTitle>
                   </CardHeader>
@@ -725,7 +697,7 @@ export function Governance() {
           {/* Proposal Detail Modal */}
           {selectedProposal && (
             <Dialog open={!!selectedProposal} onOpenChange={() => setSelectedProposal(null)}>
-              <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto crypto-card border">
+              <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto border border-gray-800/60 bg-[#0b0f16] rounded-lg shadow-md shadow-black/50">
                 <DialogHeader>
                   <DialogTitle className="flex items-center space-x-3">
                     {getCategoryIcon(selectedProposal.category)}
@@ -886,7 +858,7 @@ export function Governance() {
 
           {/* Create Proposal Modal */}
           <Dialog open={showCreateProposal} onOpenChange={setShowCreateProposal}>
-            <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto crypto-card border">
+            <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto border border-gray-800/60 bg-[#0b0f16] rounded-lg shadow-md shadow-black/50">
               <DialogHeader>
                 <DialogTitle>Create New Proposal</DialogTitle>
               </DialogHeader>
