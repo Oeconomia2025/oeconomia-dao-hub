@@ -1,24 +1,21 @@
-import { useAccount, useBalance } from 'wagmi'
+import { useAccount, useBalance, useReadContracts } from 'wagmi'
+import { erc20Abi, formatUnits } from 'viem'
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Skeleton } from "@/components/ui/skeleton"
-import { Wallet, TrendingUp, DollarSign, PieChart, Plus, ExternalLink, Droplets, Sprout, Gift, ChevronDown, ChevronUp } from 'lucide-react'
-import { useQuery } from '@tanstack/react-query'
+import { Wallet, Plus, ExternalLink, Droplets, Sprout, Gift, ChevronDown, ChevronUp } from 'lucide-react'
 import { useState } from 'react'
 import { WalletConnect } from "@/components/wallet-connect"
 import { WalletSetupGuide } from "@/components/wallet-setup-guide"
 import { LoadingSpinner } from "@/components/ui/loading-spinner"
 import { Layout } from "@/components/layout"
 
-interface TokenBalance {
-  address: string
-  symbol: string
-  name: string
-  balance: string
-  decimals: number
-  price?: number
-  value?: number
-}
+// Sepolia token definitions
+const SEPOLIA_TOKENS = [
+  { address: '0x2b2fb8df4ac5d394f0d5674d7a54802e42a06aba' as `0x${string}`, symbol: 'OEC', name: 'Oeconomia', decimals: 18, logo: '/oec-logo.png' },
+  { address: '0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238' as `0x${string}`, symbol: 'USDC', name: 'USD Coin', decimals: 6, logo: 'https://assets.coingecko.com/coins/images/6319/small/USD_Coin_icon.png' },
+  { address: '0x779877A7B0D9E8603169DdbD7836e478b4624789' as `0x${string}`, symbol: 'LINK', name: 'Chainlink', decimals: 18, logo: 'https://assets.coingecko.com/coins/images/877/small/chainlink-new-logo.png' },
+  { address: '0xfFf9976782d46CC05630D1f6eBAb18b2324d6B14' as `0x${string}`, symbol: 'WETH', name: 'Wrapped Ether', decimals: 18, logo: 'https://assets.coingecko.com/coins/images/2518/small/weth.png' },
+] as const
 
 interface PoolFarm {
   id: string
@@ -39,13 +36,6 @@ interface PoolFarm {
 export function Portfolio() {
   const { address, isConnected } = useAccount()
   const [holdingsExpanded, setHoldingsExpanded] = useState(true)
-  const [watchedTokens, setWatchedTokens] = useState<string[]>([
-    '0x55d398326f99059fF775485246999027B3197955', // USDT
-    '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56', // BUSD
-    '0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d', // USDC
-    '0x2170Ed0880ac9A755fd29B2688956BD959F933F8', // ETH
-    '0x7130d2A12B9BCbFAe4f2634d864A1Ee1Ce3Ead9c', // BTCB
-  ])
 
   // Static pools/farms data - simplified for demo purposes
   const [poolsFarms] = useState<PoolFarm[]>([
@@ -62,22 +52,35 @@ export function Portfolio() {
     }
   ])
 
-  // Get native BNB balance
-  const { data: bnbBalance } = useBalance({
+  // Get native ETH balance
+  const { data: ethBalance } = useBalance({
     address,
   })
 
-  // Fetch token balances for watched tokens
-  const { data: tokenBalances, isLoading: balancesLoading } = useQuery({
-    queryKey: ['/api/portfolio', address, watchedTokens],
-    queryFn: async () => {
-      if (!address) return []
-      const response = await fetch(`/api/portfolio/${address}?tokens=${watchedTokens.join(',')}`)
-      if (!response.ok) throw new Error('Failed to fetch portfolio')
-      return response.json()
+  // Read ERC-20 balances directly from Sepolia
+  const { data: tokenResults, isLoading: balancesLoading } = useReadContracts({
+    contracts: address ? SEPOLIA_TOKENS.map(token => ({
+      address: token.address,
+      abi: erc20Abi,
+      functionName: 'balanceOf' as const,
+      args: [address],
+    })) : [],
+    query: {
+      enabled: !!address && isConnected,
+      refetchInterval: 30000,
     },
-    enabled: !!address && isConnected,
-    refetchInterval: 60000, // Refresh every 60 seconds (doubled to reduce API rate limiting)
+  })
+
+  // Map results to token data
+  const tokenBalances = SEPOLIA_TOKENS.map((token, i) => {
+    const result = tokenResults?.[i]
+    const rawBalance = result?.status === 'success' ? (result.result as bigint) : 0n
+    const balance = formatUnits(rawBalance, token.decimals)
+    return {
+      ...token,
+      balance,
+      rawBalance,
+    }
   })
 
   const formatNumber = (num: number) => {
@@ -93,36 +96,9 @@ export function Portfolio() {
     return formatNumber(price) // Display ETH values directly
   }
 
-  // Token logo mapping - matches swap page logos
-  const getTokenLogo = (symbol: string, address?: string) => {
-    const logoMap: Record<string, string> = {
-      'OEC': '/oec-logo.png',
-      'BNB': 'https://assets.coingecko.com/coins/images/825/small/bnb-icon2_2x.png',
-      'USDT': 'https://cryptologos.cc/logos/tether-usdt-logo.png?v=032',
-      'BUSD': 'https://assets.coingecko.com/coins/images/9576/small/BUSD.png',
-      'USDC': 'https://assets.coingecko.com/coins/images/6319/small/USD_Coin_icon.png',
-      'ETH': 'https://assets.coingecko.com/coins/images/2518/small/weth.png',
-      'WETH': 'https://assets.coingecko.com/coins/images/2518/small/weth.png',
-      'BTCB': 'https://assets.coingecko.com/coins/images/14108/small/Binance-bitcoin.png',
-      'BTC': 'https://assets.coingecko.com/coins/images/14108/small/Binance-bitcoin.png',
-      'CAKE': 'https://assets.coingecko.com/coins/images/12632/small/pancakeswap-cake-logo_.png',
-      'XVS': 'https://assets.coingecko.com/coins/images/12677/small/venus.png'
-    }
-    
-    // Use address-based fallback if symbol lookup fails
-    if (address) {
-      const addressLookup: Record<string, string> = {
-        '0x55d398326f99059fF775485246999027B3197955': 'https://cryptologos.cc/logos/tether-usdt-logo.png?v=032',
-        '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56': 'https://assets.coingecko.com/coins/images/9576/small/BUSD.png',
-        '0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d': 'https://assets.coingecko.com/coins/images/6319/small/USD_Coin_icon.png',
-        '0x2170Ed0880ac9A755fd29B2688956BD959F933F8': 'https://assets.coingecko.com/coins/images/2518/small/weth.png',
-        '0x7130d2A12B9BCbFAe4f2634d864A1Ee1Ce3Ead9c': 'https://assets.coingecko.com/coins/images/14108/small/Binance-bitcoin.png',
-        '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c': 'https://assets.coingecko.com/coins/images/825/small/bnb-icon2_2x.png',
-      };
-      return addressLookup[address.toLowerCase()] || logoMap[symbol.toUpperCase()] || '/oec-logo.png';
-    }
-    
-    return logoMap[symbol.toUpperCase()] || '/oec-logo.png'
+  const getTokenLogo = (symbol: string) => {
+    const token = SEPOLIA_TOKENS.find(t => t.symbol === symbol)
+    return token?.logo || '/oec-logo.png'
   }
   const formatAddress = (addr: string) => `${addr.slice(0, 6)}...${addr.slice(-4)}`
 
@@ -179,11 +155,11 @@ export function Portfolio() {
                   className="cursor-pointer hover:text-cyan-400 transition-colors"
                   onClick={() => {
                     if (address) {
-                      window.open(`https://bscscan.com/address/${address}`, '_blank')
+                      window.open(`https://sepolia.etherscan.io/address/${address}`, '_blank')
                     }
                   }}
                 >
-                  View on BSCScan <ExternalLink className="w-3 h-3 ml-0.5 inline" />
+                  View on Etherscan <ExternalLink className="w-3 h-3 ml-0.5 inline" />
                 </span>
               </div>
             </div>
@@ -194,9 +170,9 @@ export function Portfolio() {
             <div className="relative z-10">
               <p className="text-gray-400 text-xs font-medium mb-2 uppercase tracking-wide">Assets Tracked</p>
               <div className="text-2xl font-bold text-white">
-                {(tokenBalances?.length || 0) + 1}
+                {SEPOLIA_TOKENS.length + 1}
               </div>
-              <div className="text-xs text-gray-500 mt-1">Including BNB</div>
+              <div className="text-xs text-gray-500 mt-1">Including ETH</div>
             </div>
           </Card>
 
@@ -245,69 +221,57 @@ export function Portfolio() {
                 <LoadingSpinner text="Loading portfolio" size="lg" />
               ) : (
                 <div className="space-y-1">
-                  {/* BNB Balance */}
-                  {bnbBalance && parseFloat(bnbBalance.formatted) > 0 && (
+                  {/* ETH Balance */}
+                  {ethBalance && (
                     <div className="flex items-center justify-between p-2 bg-[var(--crypto-dark)]/50 rounded-lg">
                       <div className="flex items-center space-x-2">
-                        <img 
-                          src={getTokenLogo('BNB')} 
-                          alt="BNB" 
+                        <img
+                          src="https://assets.coingecko.com/coins/images/279/small/ethereum.png"
+                          alt="ETH"
                           className="w-7 h-7 rounded-full"
                           onError={(e) => {
-                            // Fallback if image fails to load
                             e.currentTarget.style.display = 'none';
-                            e.currentTarget.parentElement!.innerHTML = '<div class="w-7 h-7 bg-yellow-500 rounded-full flex items-center justify-center text-black font-bold text-xs">BNB</div>';
+                            e.currentTarget.parentElement!.innerHTML = '<div class="w-7 h-7 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-xs">ETH</div>';
                           }}
                         />
                         <div>
-                          <div className="font-medium">Binance Coin</div>
-                          <div className="text-sm text-gray-400">BNB</div>
+                          <div className="font-medium">Sepolia ETH</div>
+                          <div className="text-sm text-gray-400">ETH</div>
                         </div>
                       </div>
                       <div className="text-right">
-                        <div className="font-medium">{formatNumber(parseFloat(bnbBalance.formatted || '0'))} BNB</div>
-                        <div className="text-sm text-gray-400">Native BNB</div>
+                        <div className="font-medium">{formatNumber(parseFloat(ethBalance.formatted || '0'))} ETH</div>
+                        <div className="text-sm text-gray-400">Native ETH</div>
                       </div>
                     </div>
                   )}
 
-                  {/* Token Balances */}
-                  {tokenBalances?.map((token: TokenBalance) => {
-                    const balance = parseFloat(token.balance) / Math.pow(10, token.decimals)
-                    
-                    return (
-                      <div key={token.address} className="flex items-center justify-between p-2 bg-[var(--crypto-dark)]/50 rounded-lg">
-                        <div className="flex items-center space-x-2">
-                          <img 
-                            src={getTokenLogo(token.symbol, token.address)} 
-                            alt={token.symbol} 
-                            className="w-7 h-7 rounded-full"
-                            onError={(e) => {
-                              // Fallback if image fails to load
-                              e.currentTarget.style.display = 'none';
-                              e.currentTarget.parentElement!.innerHTML = `<div class="w-7 h-7 bg-gradient-to-r from-crypto-blue/20 to-crypto-green/20 rounded-full flex items-center justify-center text-white font-bold text-xs">${token.symbol.slice(0, 3)}</div>`;
-                            }}
-                          />
-                          <div>
-                            <div className="font-medium">{token.name}</div>
-                            <div className="text-sm text-gray-400">{token.symbol}</div>
-                          </div>
-                        </div>
-                        <div className="text-right">
-                          <div className="font-medium">{formatNumber(balance)} {token.symbol}</div>
-                          <div className="text-sm text-gray-400">
-                            {token.value && token.value > 0 && isFinite(token.value) ? formatPrice(token.value) : '---'}
-                          </div>
+                  {/* ERC-20 Token Balances (read on-chain) */}
+                  {tokenBalances.map((token) => (
+                    <div key={token.address} className="flex items-center justify-between p-2 bg-[var(--crypto-dark)]/50 rounded-lg">
+                      <div className="flex items-center space-x-2">
+                        <img
+                          src={token.logo}
+                          alt={token.symbol}
+                          className="w-7 h-7 rounded-full"
+                          onError={(e) => {
+                            e.currentTarget.style.display = 'none';
+                            e.currentTarget.parentElement!.innerHTML = `<div class="w-7 h-7 bg-gradient-to-r from-crypto-blue/20 to-crypto-green/20 rounded-full flex items-center justify-center text-white font-bold text-xs">${token.symbol.slice(0, 3)}</div>`;
+                          }}
+                        />
+                        <div>
+                          <div className="font-medium">{token.name}</div>
+                          <div className="text-sm text-gray-400">{token.symbol}</div>
                         </div>
                       </div>
-                    )
-                  })}
-
-                  {(!tokenBalances || tokenBalances.length === 0) && (
-                    <div className="text-center py-8">
-                      <p className="text-gray-400">No token balances found</p>
+                      <div className="text-right">
+                        <div className="font-medium">{formatNumber(parseFloat(token.balance))} {token.symbol}</div>
+                        <div className="text-sm text-gray-400">
+                          {token.rawBalance > 0n ? 'On-chain balance' : '---'}
+                        </div>
+                      </div>
                     </div>
-                  )}
+                  ))}
                 </div>
               )}
             </div>
