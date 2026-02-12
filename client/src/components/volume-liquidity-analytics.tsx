@@ -146,78 +146,82 @@ export function VolumeLiquidityAnalytics({ contractAddress }: VolumeLiquidityAna
           </div>
         </div>
 
-        {/* Volume Chart */}
-        <div className="mb-8">
-          <h4 className="text-white font-semibold mb-4">Trading Volume</h4>
-          <div className="h-64">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={data}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                <XAxis 
-                  dataKey="date" 
-                  stroke="#9CA3AF"
-                  fontSize={12}
-                  tickFormatter={(value) => new Date(value).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                />
-                <YAxis 
-                  stroke="#9CA3AF"
-                  fontSize={12}
-                  tickFormatter={(value) => `$${(value / 1000000).toFixed(1)}M`}
-                />
-                <Tooltip 
-                  contentStyle={{ 
-                    backgroundColor: '#1F2937', 
-                    border: '1px solid #374151',
-                    borderRadius: '8px',
-                    color: '#F9FAFB'
-                  }}
-                  formatter={(value: number) => [`$${(value / 1000000).toFixed(2)}M`, 'Volume']}
-                  labelFormatter={(label) => new Date(label).toLocaleDateString()}
-                />
-                <Bar dataKey="volume" fill="#06B6D4" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
+        {/* Charts Side by Side */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Volume Chart */}
+          <div>
+            <h4 className="text-white font-semibold mb-4">Trading Volume</h4>
+            <div className="h-64">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={data}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                  <XAxis
+                    dataKey="date"
+                    stroke="#9CA3AF"
+                    fontSize={11}
+                    tickFormatter={(value) => new Date(value).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                  />
+                  <YAxis
+                    stroke="#9CA3AF"
+                    fontSize={11}
+                    tickFormatter={(value) => `$${(value / 1000000).toFixed(1)}M`}
+                  />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: '#1F2937',
+                      border: '1px solid #374151',
+                      borderRadius: '8px',
+                      color: '#F9FAFB'
+                    }}
+                    cursor={false}
+                    formatter={(value: number) => [`$${(value / 1000000).toFixed(2)}M`, 'Volume']}
+                    labelFormatter={(label) => new Date(label).toLocaleDateString()}
+                  />
+                  <Bar dataKey="volume" fill="#06B6D4" radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
           </div>
-        </div>
 
-        {/* Liquidity Chart */}
-        <div>
-          <h4 className="text-white font-semibold mb-4">Liquidity Trend</h4>
-          <div className="h-64">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={data}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                <XAxis 
-                  dataKey="date" 
-                  stroke="#9CA3AF"
-                  fontSize={12}
-                  tickFormatter={(value) => new Date(value).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                />
-                <YAxis 
-                  stroke="#9CA3AF"
-                  fontSize={12}
-                  tickFormatter={(value) => `$${(value / 1000000).toFixed(1)}M`}
-                />
-                <Tooltip 
-                  contentStyle={{ 
-                    backgroundColor: '#1F2937', 
-                    border: '1px solid #374151',
-                    borderRadius: '8px',
-                    color: '#F9FAFB'
-                  }}
-                  formatter={(value: number) => [`$${(value / 1000000).toFixed(2)}M`, 'Liquidity']}
-                  labelFormatter={(label) => new Date(label).toLocaleDateString()}
-                />
-                <Line 
-                  type="monotone" 
-                  dataKey="liquidity" 
-                  stroke="#10B981" 
-                  strokeWidth={3}
-                  dot={{ fill: '#10B981', strokeWidth: 2, r: 4 }}
-                  activeDot={{ r: 6, fill: '#10B981' }}
-                />
-              </LineChart>
-            </ResponsiveContainer>
+          {/* Liquidity Chart */}
+          <div>
+            <h4 className="text-white font-semibold mb-4">Liquidity Trend</h4>
+            <div className="h-64">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={data}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                  <XAxis
+                    dataKey="date"
+                    stroke="#9CA3AF"
+                    fontSize={11}
+                    tickFormatter={(value) => new Date(value).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                  />
+                  <YAxis
+                    stroke="#9CA3AF"
+                    fontSize={11}
+                    tickFormatter={(value) => `$${(value / 1000000).toFixed(1)}M`}
+                  />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: '#1F2937',
+                      border: '1px solid #374151',
+                      borderRadius: '8px',
+                      color: '#F9FAFB'
+                    }}
+                    formatter={(value: number) => [`$${(value / 1000000).toFixed(2)}M`, 'Liquidity']}
+                    labelFormatter={(label) => new Date(label).toLocaleDateString()}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="liquidity"
+                    stroke="#10B981"
+                    strokeWidth={3}
+                    dot={{ fill: '#10B981', strokeWidth: 2, r: 4 }}
+                    activeDot={{ r: 6, fill: '#10B981' }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
           </div>
         </div>
       </CardContent>

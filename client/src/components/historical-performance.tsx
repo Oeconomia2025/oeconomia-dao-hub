@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { TrendingUp, TrendingDown, Calendar, Target, Percent } from "lucide-react";
 import { formatPrice, formatNumber } from "@/lib/utils";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 interface PerformanceData {
   period: string;
@@ -193,38 +193,45 @@ export function HistoricalPerformance({ contractAddress }: HistoricalPerformance
           
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={chartData}>
+              <AreaChart data={chartData}>
+                <defs>
+                  <linearGradient id="historicalGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#3B82F6" stopOpacity={0.4} />
+                    <stop offset="100%" stopColor="#3B82F6" stopOpacity={0.0} />
+                  </linearGradient>
+                </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                <XAxis 
-                  dataKey="time" 
+                <XAxis
+                  dataKey="time"
                   stroke="#9CA3AF"
                   fontSize={12}
                   tick={{ fill: '#9CA3AF' }}
                 />
-                <YAxis 
+                <YAxis
                   stroke="#9CA3AF"
                   fontSize={12}
                   tick={{ fill: '#9CA3AF' }}
                   tickFormatter={(value) => `$${value.toFixed(3)}`}
                 />
-                <Tooltip 
-                  contentStyle={{ 
-                    backgroundColor: '#1F2937', 
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: '#1F2937',
                     border: '1px solid #374151',
                     borderRadius: '8px',
                     color: '#fff'
                   }}
                   formatter={(value: number) => [`$${value.toFixed(4)}`, 'Price']}
                 />
-                <Line 
-                  type="monotone" 
-                  dataKey="price" 
-                  stroke="#3B82F6" 
+                <Area
+                  type="monotone"
+                  dataKey="price"
+                  stroke="#3B82F6"
                   strokeWidth={2}
+                  fill="url(#historicalGradient)"
                   dot={false}
                   activeDot={{ r: 4, fill: '#3B82F6' }}
                 />
-              </LineChart>
+              </AreaChart>
             </ResponsiveContainer>
           </div>
         </div>

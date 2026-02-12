@@ -103,15 +103,16 @@ export default function Dashboard() {
             <HistoricalPerformance contractAddress={contractAddress} />
           </div>
 
-    {/* Token Information (now below the charts) */}
-    {isEthLoading ? <LoadingSpinner /> : <TokenInfoPanel tokenData={defaultTokenData} />}
           </div>
+
+          {/* Holder Statistics - above Token Info */}
+          <HolderStatistics contractAddress={contractAddress} tokenData={defaultTokenData} />
+
+          {/* Token Information (Fee Structure + ETH Network side by side, then Contract Info) */}
+          {isEthLoading ? <LoadingSpinner /> : <TokenInfoPanel tokenData={defaultTokenData} />}
 
           {/* Recent Transactions Table */}
           <TransactionsTable contractAddress={contractAddress} />
-
-          {/* Holder Statistics */}
-          <HolderStatistics contractAddress={contractAddress} tokenData={defaultTokenData} />
 
           {/* Quick Actions */}
           <QuickActions contractAddress={contractAddress} />
