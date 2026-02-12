@@ -64,6 +64,7 @@ export function Layout({ children }: LayoutProps) {
   }, [sidebarCollapsed]);
 
   const handleNavigation = (path: string) => {
+    window.scrollTo(0, 0);
     if (window.innerWidth < 1024) {
       navigate(path);
       setSidebarOpen(false);
@@ -165,7 +166,7 @@ export function Layout({ children }: LayoutProps) {
                     style={item.active ? { background: 'linear-gradient(45deg, #00d4ff, #ff00ff)' } : {}}
                     title={sidebarCollapsed ? item.label : undefined}
                   >
-                    <item.icon className={`w-5 h-5 flex-shrink-0 ${item.active ? 'text-white' : 'text-cyan-400'}`} />
+                    <item.icon className={`w-5 h-5 flex-shrink-0 ${item.active ? 'text-white' : 'text-gray-400'}`} />
                     {!sidebarCollapsed && <span className="whitespace-nowrap">{item.label}</span>}
                     {sidebarCollapsed && (
                       <div className="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-50">

@@ -3,7 +3,7 @@ import { erc20Abi, formatUnits } from 'viem'
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Wallet, Plus, ExternalLink, Droplets, Sprout, Gift, ChevronDown, ChevronUp, Coins } from 'lucide-react'
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { WalletConnect } from "@/components/wallet-connect"
 import { WalletSetupGuide } from "@/components/wallet-setup-guide"
 import { LoadingSpinner } from "@/components/ui/loading-spinner"
@@ -58,8 +58,8 @@ const PAIR_ABI = [
 export function Portfolio() {
   const { address, isConnected } = useAccount()
   const [holdingsExpanded, setHoldingsExpanded] = useState(true)
-  const [stakingExpanded, setStakingExpanded] = useState(true)
-  const [lpExpanded, setLpExpanded] = useState(true)
+  const [stakingExpanded, setStakingExpanded] = useState<boolean | null>(null)
+  const [lpExpanded, setLpExpanded] = useState<boolean | null>(null)
 
   // Get native ETH balance
   const { data: ethBalance } = useBalance({ address })
@@ -270,6 +270,23 @@ export function Portfolio() {
   const activeLpCount = lpPositions.filter(p => p.userLpBalance > 0n).length
   const totalDefiPositions = activeStakingCount + activeLpCount
 
+  // Auto-expand sections with positions, collapse those without (only set once when data loads)
+  useEffect(() => {
+    if (stakingExpanded === null && stakingPositions.length > 0) {
+      setStakingExpanded(activeStakingCount > 0)
+    }
+  }, [stakingPositions, activeStakingCount, stakingExpanded])
+
+  useEffect(() => {
+    if (lpExpanded === null && lpPositions.length > 0) {
+      setLpExpanded(activeLpCount > 0)
+    }
+  }, [lpPositions, activeLpCount, lpExpanded])
+
+  // Use false as fallback while loading
+  const isStakingExpanded = stakingExpanded ?? false
+  const isLpExpanded = lpExpanded ?? false
+
   const formatNumber = (num: number) => {
     if (isNaN(num) || !isFinite(num)) return '0'
     return num.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 5 })
@@ -471,13 +488,13 @@ export function Portfolio() {
           <div className="relative z-10 p-5">
           <div
             className="flex items-center justify-between mb-4 cursor-pointer hover:bg-gray-800/30 -m-2 p-2 rounded-lg transition-colors"
-            onClick={() => setStakingExpanded(!stakingExpanded)}
+            onClick={() => setStakingExpanded(!isStakingExpanded)}
           >
             <div className="flex items-center space-x-3">
               <Coins className="w-4 h-4 text-purple-400" />
               <h2 className="text-sm font-semibold text-gray-300 uppercase tracking-wide">OEC Staking</h2>
               <span className="text-xs text-gray-500">({poolCount} pool{poolCount !== 1 ? 's' : ''})</span>
-              {stakingExpanded ? (
+              {isStakingExpanded ? (
                 <ChevronUp className="w-4 h-4 text-gray-500" />
               ) : (
                 <ChevronDown className="w-4 h-4 text-gray-500" />
@@ -489,7 +506,7 @@ export function Portfolio() {
               className="border-gray-700 bg-[#161b22] text-gray-300 hover:bg-[#1c2128] hover:text-white text-xs rounded-lg"
               onClick={(e) => {
                 e.stopPropagation()
-                window.open('https://oec-staking.netlify.app/', '_blank')
+                window.open('https://staking.oeconomia.io/pools', '_blank')
               }}
             >
               <ExternalLink className="w-3 h-3 mr-1.5" />
@@ -497,7 +514,7 @@ export function Portfolio() {
             </Button>
           </div>
 
-          {stakingExpanded && (
+          {isStakingExpanded && (
             <div className="space-y-3">
               {stakingLoading ? (
                 <LoadingSpinner text="Loading staking positions" size="lg" />
@@ -507,17 +524,25 @@ export function Portfolio() {
                   <p className="text-gray-400 text-sm">No staking pools found</p>
                 </div>
               ) : (
-                stakingPositions.map((pool) => (
-                  <Card key={pool.poolId} className="p-4 border border-purple-500/30 bg-gradient-to-r from-purple-500/5 to-indigo-500/5 hover:from-purple-500/10 hover:to-indigo-500/10 transition-all duration-200">
+                stakingPositions.map((pool) => {
+                  const gradients = [
+                    { bg: 'from-cyan-500/5 to-blue-600/5', hover: 'hover:from-cyan-500/10 hover:to-blue-600/10', border: 'border-cyan-500/30', icon: 'from-cyan-500 to-blue-600', badge: 'bg-cyan-500/20 text-cyan-400' },
+                    { bg: 'from-purple-500/5 to-pink-600/5', hover: 'hover:from-purple-500/10 hover:to-pink-600/10', border: 'border-purple-500/30', icon: 'from-purple-500 to-pink-600', badge: 'bg-purple-500/20 text-purple-400' },
+                    { bg: 'from-green-500/5 to-teal-600/5', hover: 'hover:from-green-500/10 hover:to-teal-600/10', border: 'border-green-500/30', icon: 'from-green-500 to-teal-600', badge: 'bg-green-500/20 text-green-400' },
+                    { bg: 'from-orange-500/5 to-red-600/5', hover: 'hover:from-orange-500/10 hover:to-red-600/10', border: 'border-orange-500/30', icon: 'from-orange-500 to-red-600', badge: 'bg-orange-500/20 text-orange-400' },
+                  ]
+                  const g = gradients[pool.poolId % gradients.length]
+                  return (
+                  <Card key={pool.poolId} className={`p-4 border ${g.border} bg-gradient-to-r ${g.bg} ${g.hover} transition-all duration-200`}>
                     <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center space-x-3">
-                        <div className="w-9 h-9 rounded-full bg-gradient-to-r from-purple-500 to-indigo-500 flex items-center justify-center">
+                        <div className={`w-9 h-9 rounded-full bg-gradient-to-r ${g.icon} flex items-center justify-center`}>
                           <Sprout className="w-4 h-4 text-white" />
                         </div>
                         <div>
                           <div className="flex items-center space-x-2">
                             <span className="font-medium">{pool.stakingSymbol} Staking</span>
-                            <span className="text-xs px-2 py-0.5 rounded bg-purple-500/20 text-purple-400">
+                            <span className={`text-xs px-2 py-0.5 rounded ${g.badge}`}>
                               Pool #{pool.poolId}
                             </span>
                           </div>
@@ -570,7 +595,8 @@ export function Portfolio() {
                       </div>
                     </div>
                   </Card>
-                ))
+                  )
+                })
               )}
             </div>
           )}
@@ -583,13 +609,13 @@ export function Portfolio() {
           <div className="relative z-10 p-5">
           <div
             className="flex items-center justify-between mb-4 cursor-pointer hover:bg-gray-800/30 -m-2 p-2 rounded-lg transition-colors"
-            onClick={() => setLpExpanded(!lpExpanded)}
+            onClick={() => setLpExpanded(!isLpExpanded)}
           >
             <div className="flex items-center space-x-3">
               <Droplets className="w-4 h-4 text-teal-400" />
               <h2 className="text-sm font-semibold text-gray-300 uppercase tracking-wide">Eloqura Liquidity</h2>
               <span className="text-xs text-gray-500">({activeLpCount} position{activeLpCount !== 1 ? 's' : ''})</span>
-              {lpExpanded ? (
+              {isLpExpanded ? (
                 <ChevronUp className="w-4 h-4 text-gray-500" />
               ) : (
                 <ChevronDown className="w-4 h-4 text-gray-500" />
@@ -601,7 +627,7 @@ export function Portfolio() {
               className="border-gray-700 bg-[#161b22] text-gray-300 hover:bg-[#1c2128] hover:text-white text-xs rounded-lg"
               onClick={(e) => {
                 e.stopPropagation()
-                window.open('https://eloqura.netlify.app/', '_blank')
+                window.open('https://eloqura.oeconomia.io/liquidity', '_blank')
               }}
             >
               <ExternalLink className="w-3 h-3 mr-1.5" />
@@ -609,7 +635,7 @@ export function Portfolio() {
             </Button>
           </div>
 
-          {lpExpanded && (
+          {isLpExpanded && (
             <div className="space-y-3">
               {lpLoading ? (
                 <LoadingSpinner text="Loading LP positions" size="lg" />
