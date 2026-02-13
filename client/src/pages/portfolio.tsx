@@ -392,9 +392,8 @@ export function Portfolio() {
         </div>
 
         {/* Token Holdings */}
-        <Card className="border border-gray-800/60 bg-[#0b0f16] rounded-lg shadow-md shadow-black/50 relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-white/[0.03] via-white/[0.01] to-transparent pointer-events-none" />
-          <div className="relative z-10 p-5">
+        <Card className="border border-gray-700 bg-[#030712] rounded-lg shadow-md shadow-black/50 overflow-hidden">
+          <div className="p-5">
           <div
             className="flex items-center justify-between mb-4 cursor-pointer hover:bg-gray-800/30 -m-2 p-2 rounded-lg transition-colors"
             onClick={() => setHoldingsExpanded(!holdingsExpanded)}

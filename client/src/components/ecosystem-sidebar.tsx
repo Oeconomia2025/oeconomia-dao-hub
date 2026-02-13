@@ -193,9 +193,8 @@ export function EcosystemSidebar() {
         <div
           className="rounded-xl p-6 border shadow-2xl shadow-black/50"
           style={{
-            backgroundColor: "rgba(0, 0, 0, 0.10)",
-            borderColor: "rgba(128, 0, 255, 0.5)",
-            borderRightWidth: "3px",
+            backgroundColor: "rgba(3, 7, 18, 0.10)",
+            borderColor: "#374151",
             height: "250px",
             backdropFilter: "blur(20px)",
             WebkitBackdropFilter: "blur(20px)",
@@ -203,7 +202,7 @@ export function EcosystemSidebar() {
         >
           {activeItem && (
             <>
-              <div className="flex items-center gap-3 mb-4 pb-4 border-b border-[var(--crypto-border)]">
+              <div className="flex items-center gap-3 mb-4 pb-4 border-b border-gray-700">
                 <img
                   src={activeItem.image}
                   alt={activeItem.name}
@@ -240,15 +239,14 @@ export function EcosystemSidebar() {
         <div
           className="rounded-xl p-6 border shadow-2xl shadow-black/50"
           style={{
-            backgroundColor: "rgba(0, 0, 0, 0.10)",
-            borderColor: "rgba(128, 0, 255, 0.5)",
-            borderRightWidth: "3px",
+            backgroundColor: "rgba(3, 7, 18, 0.10)",
+            borderColor: "#374151",
             height: "250px",
             backdropFilter: "blur(20px)",
             WebkitBackdropFilter: "blur(20px)",
           }}
         >
-          <div className="flex items-center gap-3 mb-4 pb-4 border-b border-[var(--crypto-border)]">
+          <div className="flex items-center gap-3 mb-4 pb-4 border-b border-gray-700">
             <img
               src={openInNewTab ? "/ecosystem/tab-new.png" : "/ecosystem/tab-same.png"}
               alt={openInNewTab ? "New Tab Mode" : "Same Tab Mode"}
