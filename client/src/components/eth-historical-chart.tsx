@@ -32,7 +32,7 @@ export function ETHHistoricalChart() {
     script.src = "https://s3.tradingview.com/external-embedding/embed-widget-symbol-overview.js";
     script.async = true;
     script.textContent = JSON.stringify({
-      symbols: [["INDEX:ETHUSD|1D"]],
+      symbols: [["INDEX:ETHUSD|1M"]],
       chartOnly: false,
       width: "100%",
       height: "100%",
