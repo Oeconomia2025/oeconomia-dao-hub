@@ -293,8 +293,8 @@ export function Layout({ children }: LayoutProps) {
       {/* Main Content */}
       <div className="flex-1 lg:ml-0 mr-9 relative">
         {/* Top Bar with Price Pills */}
-        <header className="sticky top-0 z-30 bg-gray-950/90 backdrop-blur-sm border-b border-gray-700 px-4 h-14 flex items-center">
-          <div className="flex items-center justify-between w-full">
+        <header className="sticky top-0 z-30 bg-gray-950/90 backdrop-blur-sm border-b border-gray-700 h-14 flex items-center px-4 md:px-5">
+          <div className="flex items-center justify-between w-full max-w-7xl mx-auto">
             {/* Mobile menu button */}
             <Button
               variant="ghost"
