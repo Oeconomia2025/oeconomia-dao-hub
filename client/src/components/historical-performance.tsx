@@ -124,7 +124,7 @@ export function HistoricalPerformance({ contractAddress }: HistoricalPerformance
     };
 
     return (
-      <div className="flex items-center justify-between p-3 bg-[#0d1219]/50 rounded-lg border border-gray-800/40">
+      <div className="flex items-center justify-between p-4 bg-[#0b0f16] rounded-lg border border-gray-800/60 hover:border-gray-700 transition-all duration-200 shadow-md shadow-black/50">
         <div className="flex items-center space-x-3">
           <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
             colorClass || 'bg-crypto-blue/20'
@@ -143,7 +143,7 @@ export function HistoricalPerformance({ contractAddress }: HistoricalPerformance
   };
 
   return (
-    <Card className="p-4 border border-gray-800/60 bg-[#0b0f16] rounded-lg shadow-md shadow-black/50 relative overflow-hidden">
+    <Card className="p-4 border border-gray-700 bg-[#030712] rounded-lg shadow-md shadow-black/50 relative overflow-hidden">
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center space-x-2">
           <Calendar className="w-5 h-5 text-crypto-purple" />

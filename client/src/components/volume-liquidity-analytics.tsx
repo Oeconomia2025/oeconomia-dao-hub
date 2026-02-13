@@ -76,8 +76,7 @@ function ChartCard({
   children: React.ReactNode;
 }) {
   return (
-    <Card className="p-4 border border-gray-800/60 bg-[#0b0f16] rounded-lg shadow-md shadow-black/50 relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-br from-white/[0.03] via-white/[0.01] to-transparent pointer-events-none" />
+    <Card className="p-4 border border-gray-700 bg-[#030712] rounded-lg shadow-md shadow-black/50 relative overflow-hidden">
       <div className="relative z-10">
         <h3 className="text-sm font-semibold text-gray-300 mb-4">{title}</h3>
         <div className="h-[205px]">{children}</div>

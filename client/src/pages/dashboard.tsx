@@ -9,7 +9,6 @@ import { PriceChart } from "@/components/price-chart";
 import { ETHHistoricalChart } from "@/components/eth-historical-chart";
 import { TokenInfoPanel } from "@/components/token-info-panel";
 import { VolumeLiquidityAnalytics } from "@/components/volume-liquidity-analytics";
-import { HistoricalPerformance } from "@/components/historical-performance";
 import { TransactionsTable } from "@/components/transactions-table";
 import { HolderStatistics } from "@/components/holder-statistics";
 import { QuickActions } from "@/components/quick-actions";
@@ -94,7 +93,6 @@ export default function Dashboard() {
           {/* Charts block */}
           <ETHHistoricalChart />
           <VolumeLiquidityAnalytics contractAddress={contractAddress} />
-          <HistoricalPerformance contractAddress={contractAddress} />
 
           {/* Holder Statistics - above Token Info */}
           <HolderStatistics contractAddress={contractAddress} tokenData={defaultTokenData} />
