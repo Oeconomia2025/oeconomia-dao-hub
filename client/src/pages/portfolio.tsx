@@ -820,13 +820,13 @@ export function Portfolio() {
               </div>
               {stakingLoading ? (
                 <LoadingSpinner text="Loading staking positions" size="lg" />
-              ) : stakingPositions.length === 0 ? (
+              ) : stakingPositions.filter(p => p.userStaked > 0n).length === 0 ? (
                 <div className="text-center py-6">
                   <Sprout className="w-10 h-10 text-gray-600 mx-auto mb-3" />
-                  <p className="text-gray-400 text-sm">No staking pools found</p>
+                  <p className="text-gray-400 text-sm">No active stakes found</p>
                 </div>
               ) : (
-                stakingPositions.map((pool) => {
+                stakingPositions.filter(pool => pool.userStaked > 0n).map((pool) => {
                   const gradients = [
                     { bg: 'from-cyan-500/5 to-blue-600/5', hover: 'hover:from-cyan-500/10 hover:to-blue-600/10', border: 'border-cyan-500/30', icon: 'from-cyan-500 to-blue-600', badge: 'bg-cyan-500/20 text-cyan-400' },
                     { bg: 'from-purple-500/5 to-pink-600/5', hover: 'hover:from-purple-500/10 hover:to-pink-600/10', border: 'border-purple-500/30', icon: 'from-purple-500 to-pink-600', badge: 'bg-purple-500/20 text-purple-400' },
