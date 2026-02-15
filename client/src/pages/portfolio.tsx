@@ -186,9 +186,10 @@ export function Portfolio() {
 
   // Discover all ERC-20 tokens via Alchemy serverless function
   useEffect(() => {
+    let isInitial = true
     const discover = async () => {
       if (!address) { setDiscoveredTokens([]); return }
-      setTokensLoading(true)
+      if (isInitial) setTokensLoading(true)
       try {
         const res = await fetch(`/.netlify/functions/wallet-tokens?address=${address}`)
         if (res.ok) {
@@ -199,6 +200,7 @@ export function Portfolio() {
         console.error('Token discovery failed:', err)
       } finally {
         setTokensLoading(false)
+        isInitial = false
       }
     }
     discover()
