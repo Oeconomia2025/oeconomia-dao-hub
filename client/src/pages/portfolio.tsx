@@ -1,22 +1,35 @@
 import { useAccount, useBalance, useReadContracts, useReadContract, usePublicClient } from 'wagmi'
-import { erc20Abi, formatUnits, parseUnits } from 'viem'
+import { formatUnits, parseUnits } from 'viem'
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Wallet, Plus, ExternalLink, Droplets, Sprout, Gift, ChevronDown, ChevronUp, Coins, Gem, Palette, TrendingUp, Shield } from 'lucide-react'
+import { Wallet, Plus, ExternalLink, Droplets, Sprout, Gift, ChevronDown, ChevronUp, Coins, Gem, Palette, TrendingUp, Shield, Settings, X } from 'lucide-react'
 import { useState, useMemo, useEffect } from 'react'
 import { WalletConnect } from "@/components/wallet-connect"
 import { WalletSetupGuide } from "@/components/wallet-setup-guide"
 import { LoadingSpinner } from "@/components/ui/loading-spinner"
 import { Layout } from "@/components/layout"
 
-// Sepolia token definitions
-const SEPOLIA_TOKENS = [
-  { address: '0x2b2fb8df4ac5d394f0d5674d7a54802e42a06aba' as `0x${string}`, symbol: 'OEC', name: 'Oeconomia', decimals: 18, logo: '/oec-logo.png' },
-  { address: '0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238' as `0x${string}`, symbol: 'USDC', name: 'USD Coin', decimals: 6, logo: 'https://assets.coingecko.com/coins/images/6319/small/USD_Coin_icon.png' },
-  { address: '0x779877A7B0D9E8603169DdbD7836e478b4624789' as `0x${string}`, symbol: 'LINK', name: 'Chainlink', decimals: 18, logo: 'https://assets.coingecko.com/coins/images/877/small/chainlink-new-logo.png' },
-  { address: '0xfFf9976782d46CC05630D1f6eBAb18b2324d6B14' as `0x${string}`, symbol: 'WETH', name: 'Wrapped Ether (Uniswap)', decimals: 18, logo: 'https://assets.coingecko.com/coins/images/2518/small/weth.png' },
-  { address: '0x34b11F6b8f78fa010bBCA71bC7FE79dAa811b89f' as `0x${string}`, symbol: 'WETH', name: 'Wrapped Ether (Eloqura)', decimals: 18, logo: 'https://assets.coingecko.com/coins/images/2518/small/weth.png' },
-] as const
+// Known token metadata for display (logos, friendly names)
+const KNOWN_TOKEN_META: Record<string, { symbol: string; name: string; logo: string }> = {
+  '0x2b2fb8df4ac5d394f0d5674d7a54802e42a06aba': { symbol: 'OEC', name: 'Oeconomia', logo: '/oec-logo.png' },
+  '0x1c7d4b196cb0c7b01d743fbc6116a902379c7238': { symbol: 'USDC', name: 'USD Coin', logo: 'https://assets.coingecko.com/coins/images/6319/small/USD_Coin_icon.png' },
+  '0x779877a7b0d9e8603169ddbd7836e478b4624789': { symbol: 'LINK', name: 'Chainlink', logo: 'https://assets.coingecko.com/coins/images/877/small/chainlink-new-logo.png' },
+  '0xfff9976782d46cc05630d1f6ebab18b2324d6b14': { symbol: 'WETH', name: 'Wrapped Ether (Uniswap)', logo: 'https://assets.coingecko.com/coins/images/2518/small/weth.png' },
+  '0x34b11f6b8f78fa010bbca71bc7fe79daa811b89f': { symbol: 'WETH', name: 'Wrapped Ether (Eloqura)', logo: 'https://assets.coingecko.com/coins/images/2518/small/weth.png' },
+  '0x5bb220afc6e2e008cb2302a83536a019ed245aa2': { symbol: 'AAVE', name: 'Aave', logo: 'https://assets.coingecko.com/coins/images/12645/small/AAVE.png' },
+  '0x3e622317f8c93f7328350cf0b56d9ed4c620c5d6': { symbol: 'DAI', name: 'Dai Stablecoin', logo: 'https://assets.coingecko.com/coins/images/9956/small/Badge_Dai.png' },
+}
+
+// Tokens to always price (for staking/LP calculations even if not in wallet)
+const PRICING_TOKENS = [
+  { address: '0x2b2fb8df4ac5d394f0d5674d7a54802e42a06aba', symbol: 'OEC', decimals: 18 },
+  { address: '0x1c7d4b196cb0c7b01d743fbc6116a902379c7238', symbol: 'USDC', decimals: 6 },
+  { address: '0x779877a7b0d9e8603169ddbd7836e478b4624789', symbol: 'LINK', decimals: 18 },
+  { address: '0xfff9976782d46cc05630d1f6ebab18b2324d6b14', symbol: 'WETH', decimals: 18 },
+  { address: '0x34b11f6b8f78fa010bbca71bc7fe79daa811b89f', symbol: 'WETH', decimals: 18 },
+]
+
+const OEC_ADDRESS = '0x2b2fb8df4ac5d394f0d5674d7a54802e42a06aba'
 
 // Known token address → symbol/name map for resolution
 const TOKEN_MAP: Record<string, { symbol: string; name: string; decimals: number }> = {
@@ -129,6 +142,27 @@ export function Portfolio() {
   const [alluriaExpanded, setAlluriaExpanded] = useState(MOCK_ALLURIA_POSITIONS.length > 0)
   const [artivyaExpanded, setArtivyaExpanded] = useState(MOCK_ARTIVYA_NFTS.length > 0)
   const [activeSection, setActiveSection] = useState<string>('holdings')
+  const [discoveredTokens, setDiscoveredTokens] = useState<Array<{
+    address: string; symbol: string; name: string; decimals: number; logo: string | null; balance: string;
+  }>>([])
+  const [tokensLoading, setTokensLoading] = useState(false)
+  const [hiddenTokens, setHiddenTokens] = useState<Set<string>>(() => {
+    try {
+      const saved = localStorage.getItem('dao-hidden-tokens')
+      return saved ? new Set(JSON.parse(saved)) : new Set()
+    } catch { return new Set() }
+  })
+  const [showTokenSettings, setShowTokenSettings] = useState(false)
+
+  const toggleTokenVisibility = (key: string) => {
+    setHiddenTokens(prev => {
+      const next = new Set(prev)
+      if (next.has(key)) next.delete(key)
+      else next.add(key)
+      localStorage.setItem('dao-hidden-tokens', JSON.stringify([...next]))
+      return next
+    })
+  }
 
   // Scroll spy for nav active indicator
   useEffect(() => {
@@ -150,17 +184,48 @@ export function Portfolio() {
     return () => observer.disconnect()
   }, [])
 
+  // Discover all ERC-20 tokens via Alchemy serverless function
+  useEffect(() => {
+    const discover = async () => {
+      if (!address) { setDiscoveredTokens([]); return }
+      setTokensLoading(true)
+      try {
+        const res = await fetch(`/.netlify/functions/wallet-tokens?address=${address}`)
+        if (res.ok) {
+          const data = await res.json()
+          setDiscoveredTokens(data.tokens || [])
+        }
+      } catch (err) {
+        console.error('Token discovery failed:', err)
+      } finally {
+        setTokensLoading(false)
+      }
+    }
+    discover()
+    const interval = setInterval(discover, 60000)
+    return () => clearInterval(interval)
+  }, [address])
+
   // Fetch token prices via Uniswap V3 QuoterV2 + Eloqura DEX fallback
   useEffect(() => {
     const fetchPrices = async () => {
       if (!publicClient) return
       const prices: Record<string, number> = {}
 
-      // All tokens to price (including ETH)
-      const pricingTokens = [
+      // Merge discovered tokens + baseline pricing tokens (deduplicated)
+      const seen = new Set<string>()
+      const pricingTokens: Array<{ symbol: string; address: string; decimals: number }> = [
         { symbol: 'ETH', address: '0x0000000000000000000000000000000000000000', decimals: 18 },
-        ...SEPOLIA_TOKENS.map(t => ({ symbol: t.symbol, address: t.address, decimals: t.decimals })),
       ]
+      seen.add('0x0000000000000000000000000000000000000000')
+      for (const t of discoveredTokens) {
+        const addr = t.address.toLowerCase()
+        if (!seen.has(addr)) { pricingTokens.push({ symbol: t.symbol, address: addr, decimals: t.decimals }); seen.add(addr) }
+      }
+      for (const t of PRICING_TOKENS) {
+        const addr = t.address.toLowerCase()
+        if (!seen.has(addr)) { pricingTokens.push({ symbol: t.symbol, address: addr, decimals: t.decimals }); seen.add(addr) }
+      }
 
       for (const token of pricingTokens) {
         // USDC = $1
@@ -246,36 +311,24 @@ export function Portfolio() {
         if (token.symbol === 'WETH' && prices['WETH'] && !prices['ETH']) prices['ETH'] = prices['WETH']
       }
 
+      // Also store prices by lowercase address for address-based lookups
+      for (const t of pricingTokens) {
+        const a = t.address.toLowerCase()
+        if (prices[t.symbol] !== undefined) prices[a] = prices[t.symbol]
+      }
+      prices['eth'] = prices['ETH'] || 0
+
       setTokenPrices(prices)
     }
     fetchPrices()
     const interval = setInterval(fetchPrices, 60000)
     return () => clearInterval(interval)
-  }, [publicClient])
+  }, [publicClient, discoveredTokens])
 
   const getPrice = (symbol: string) => tokenPrices[symbol] || 0
 
   // Get native ETH balance
   const { data: ethBalance } = useBalance({ address })
-
-  // Read ERC-20 balances directly from Sepolia
-  const { data: tokenResults, isLoading: balancesLoading } = useReadContracts({
-    contracts: address ? SEPOLIA_TOKENS.map(token => ({
-      address: token.address,
-      abi: erc20Abi,
-      functionName: 'balanceOf' as const,
-      args: [address],
-    })) : [],
-    query: { enabled: !!address && isConnected, refetchInterval: 30000 },
-  })
-
-  // Map results to token data
-  const tokenBalances = SEPOLIA_TOKENS.map((token, i) => {
-    const result = tokenResults?.[i]
-    const rawBalance = result?.status === 'success' ? (result.result as bigint) : 0n
-    const balance = formatUnits(rawBalance, token.decimals)
-    return { ...token, balance, rawBalance }
-  })
 
   // ── STAKING: Phase 1 — get pool count ──
   const { data: poolCountData } = useReadContract({
@@ -482,17 +535,17 @@ export function Portfolio() {
   const isLpExpanded = lpExpanded ?? false
 
   // Section totals
-  const tokensWithBalance = tokenBalances.filter(t => t.rawBalance > 0n).length + (ethBalance && parseFloat(ethBalance.formatted || '0') > 0 ? 1 : 0)
+  const visibleTokens = discoveredTokens.filter(t => !hiddenTokens.has(t.address.toLowerCase()))
+  const tokensWithBalance = visibleTokens.length + (ethBalance && !hiddenTokens.has('eth') && parseFloat(ethBalance.formatted || '0') > 0 ? 1 : 0)
   const totalStakedDisplay = stakingPositions.reduce((sum, p) => sum + parseFloat(formatUnits(p.userStaked, p.stakingDecimals)), 0)
   const totalPendingDisplay = stakingPositions.reduce((sum, p) => sum + parseFloat(formatUnits(p.pendingRewards, p.rewardsDecimals)), 0)
 
-  // USD value computations
+  // USD value computations (include ALL tokens in portfolio total regardless of visibility)
   const ethUsdValue = ethBalance ? parseFloat(ethBalance.formatted || '0') * getPrice('ETH') : 0
-  const tokenUsdValues = tokenBalances.map(t => ({
-    symbol: t.symbol,
-    usdValue: parseFloat(t.balance) * getPrice(t.symbol),
-  }))
-  const holdingsUsdTotal = ethUsdValue + tokenUsdValues.reduce((sum, t) => sum + t.usdValue, 0)
+  const holdingsUsdTotal = ethUsdValue + discoveredTokens.reduce((sum, t) => {
+    const balance = parseFloat(formatUnits(BigInt(t.balance), t.decimals))
+    return sum + balance * getPrice(t.address.toLowerCase())
+  }, 0)
 
   const stakingUsdTotal = stakingPositions.reduce((sum, p) => {
     const staked = parseFloat(formatUnits(p.userStaked, p.stakingDecimals)) * getPrice(p.stakingSymbol)
@@ -514,7 +567,7 @@ export function Portfolio() {
   const alluriaNetValue = MOCK_ALLURIA_POSITIONS.reduce((sum, p) => sum + (p.collateralValue - p.borrowed), 0)
   const artivyaNFTCount = MOCK_ARTIVYA_NFTS.length
   const artivyaTotalOec = MOCK_ARTIVYA_NFTS.reduce((sum, n) => sum + n.price, 0)
-  const artivyaUsdTotal = artivyaTotalOec * getPrice('OEC')
+  const artivyaUsdTotal = artivyaTotalOec * getPrice(OEC_ADDRESS)
 
   const portfolioValueUsd = holdingsUsdTotal + stakingUsdTotal + lpUsdTotal + alluriaNetValue + artivyaUsdTotal
 
@@ -608,7 +661,7 @@ export function Portfolio() {
             <div className="relative z-10">
               <p className="text-gray-400 text-xs font-medium mb-2 uppercase tracking-wide">Assets Tracked</p>
               <div className="text-2xl font-bold text-white">
-                {SEPOLIA_TOKENS.length + 1}
+                {discoveredTokens.length + 1}
               </div>
               <div className="text-xs text-gray-500 mt-1">Including ETH</div>
             </div>
@@ -670,6 +723,13 @@ export function Portfolio() {
           >
             <div className="flex items-center space-x-3">
               <h2 className="text-xl leading-tight font-bold text-gray-300 uppercase tracking-wide">Holdings</h2>
+              <button
+                onClick={(e) => { e.stopPropagation(); setShowTokenSettings(true) }}
+                className="p-1 rounded hover:bg-gray-700 transition-colors"
+                title="Token visibility settings"
+              >
+                <Settings className="w-4 h-4 text-gray-400 hover:text-white" />
+              </button>
               {holdingsExpanded ? (
                 <ChevronUp className="w-4 h-4 text-gray-500" />
               ) : (
@@ -696,23 +756,17 @@ export function Portfolio() {
           {holdingsExpanded && (
             <div>
               <div className="flex items-center justify-between py-2 px-3 mb-3 bg-gray-800/30 rounded-lg border border-gray-700/30">
-                <span className="text-xs text-gray-400">{tokensWithBalance} of {SEPOLIA_TOKENS.length + 1} tokens held</span>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="border-gray-700 bg-[#161b22] text-gray-300 hover:bg-[#1c2128] hover:text-white text-xs rounded-lg"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <Plus className="w-3 h-3 mr-1.5" />
-                  Add Token
-                </Button>
+                <span className="text-xs text-gray-400">{tokensWithBalance} token{tokensWithBalance !== 1 ? 's' : ''} held</span>
+                {hiddenTokens.size > 0 && (
+                  <span className="text-xs text-gray-500">{hiddenTokens.size} hidden</span>
+                )}
               </div>
-              {balancesLoading ? (
-                <LoadingSpinner text="Loading portfolio" size="lg" />
+              {tokensLoading ? (
+                <LoadingSpinner text="Discovering tokens" size="lg" />
               ) : (
                 <div className="divide-y divide-gray-800">
                   {/* ETH Balance */}
-                  {ethBalance && (
+                  {ethBalance && !hiddenTokens.has('eth') && (
                     <div className="flex items-center justify-between p-2">
                       <div className="flex items-center space-x-2">
                         <img
@@ -738,40 +792,129 @@ export function Portfolio() {
                     </div>
                   )}
 
-                  {/* ERC-20 Token Balances (read on-chain, only show non-zero) */}
-                  {tokenBalances.filter(t => t.rawBalance > 0n).map((token) => (
-                    <div key={token.address} className="flex items-center justify-between p-2">
-                      <div className="flex items-center space-x-2">
-                        <img
-                          src={token.logo}
-                          alt={token.symbol}
-                          className="w-7 h-7 rounded-full"
-                          onError={(e) => {
-                            e.currentTarget.style.display = 'none';
-                            e.currentTarget.parentElement!.innerHTML = `<div class="w-7 h-7 bg-gradient-to-r from-crypto-blue/20 to-crypto-green/20 rounded-full flex items-center justify-center text-white font-bold text-xs">${token.symbol.slice(0, 3)}</div>`;
-                          }}
-                        />
-                        <div>
-                          <div className="font-medium">{token.name}</div>
-                          <div className="text-sm text-gray-400">{token.symbol}</div>
+                  {/* Discovered ERC-20 Token Balances (auto-discovered, filtered by visibility) */}
+                  {visibleTokens.map((token) => {
+                    const meta = KNOWN_TOKEN_META[token.address.toLowerCase()]
+                    const displayName = meta?.name || token.name
+                    const displaySymbol = meta?.symbol || token.symbol
+                    const displayLogo = meta?.logo || token.logo
+                    const balance = parseFloat(formatUnits(BigInt(token.balance), token.decimals))
+                    const usdValue = balance * getPrice(token.address.toLowerCase())
+                    return (
+                      <div key={token.address} className="flex items-center justify-between p-2">
+                        <div className="flex items-center space-x-2">
+                          {displayLogo ? (
+                            <img
+                              src={displayLogo}
+                              alt={displaySymbol}
+                              className="w-7 h-7 rounded-full"
+                              onError={(e) => {
+                                e.currentTarget.style.display = 'none';
+                                e.currentTarget.parentElement!.innerHTML = `<div class="w-7 h-7 bg-gradient-to-r from-cyan-500/20 to-purple-500/20 rounded-full flex items-center justify-center text-white font-bold text-xs">${displaySymbol.slice(0, 3)}</div>`;
+                              }}
+                            />
+                          ) : (
+                            <div className="w-7 h-7 bg-gradient-to-r from-cyan-500/20 to-purple-500/20 rounded-full flex items-center justify-center text-white font-bold text-xs">
+                              {displaySymbol.slice(0, 3)}
+                            </div>
+                          )}
+                          <div>
+                            <div className="font-medium">{displayName}</div>
+                            <div className="text-sm text-gray-400">{displaySymbol}</div>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <div className="font-medium">{formatNumber(balance)} {displaySymbol}</div>
+                          <div className="text-sm text-cyan-400">
+                            {usdValue > 0 ? formatPrice(usdValue) : '---'}
+                          </div>
                         </div>
                       </div>
-                      <div className="text-right">
-                        <div className="font-medium">{formatNumber(parseFloat(token.balance))} {token.symbol}</div>
-                        <div className="text-sm text-cyan-400">
-                          {token.rawBalance > 0n && getPrice(token.symbol) > 0
-                            ? formatPrice(parseFloat(token.balance) * getPrice(token.symbol))
-                            : '---'}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
+                    )
+                  })}
                 </div>
               )}
             </div>
           )}
           </div>
         </Card>
+
+        {/* Token Visibility Modal */}
+        {showTokenSettings && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={() => setShowTokenSettings(false)}>
+            <div className="bg-[#0b0f16] border border-gray-700 rounded-xl p-5 w-full max-w-md mx-4 max-h-[80vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-bold text-white">Token Visibility</h3>
+                <button onClick={() => setShowTokenSettings(false)} className="p-1 rounded hover:bg-gray-700 transition-colors">
+                  <X className="w-5 h-5 text-gray-400" />
+                </button>
+              </div>
+              <div className="space-y-2">
+                {/* ETH toggle */}
+                <div className="flex items-center justify-between p-2 rounded-lg hover:bg-gray-800/50">
+                  <div className="flex items-center space-x-2">
+                    <img src="https://assets.coingecko.com/coins/images/279/small/ethereum.png" alt="ETH" className="w-6 h-6 rounded-full" />
+                    <div>
+                      <div className="text-sm font-medium">Sepolia ETH</div>
+                      <div className="text-xs text-gray-400">ETH</div>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => toggleTokenVisibility('eth')}
+                    className={`w-10 h-5 rounded-full transition-colors relative ${!hiddenTokens.has('eth') ? 'bg-cyan-500' : 'bg-gray-600'}`}
+                  >
+                    <div className={`w-4 h-4 bg-white rounded-full absolute top-0.5 transition-transform ${!hiddenTokens.has('eth') ? 'translate-x-5' : 'translate-x-0.5'}`} />
+                  </button>
+                </div>
+                {/* Discovered token toggles */}
+                {discoveredTokens.map((token) => {
+                  const meta = KNOWN_TOKEN_META[token.address.toLowerCase()]
+                  const displayName = meta?.name || token.name
+                  const displaySymbol = meta?.symbol || token.symbol
+                  const displayLogo = meta?.logo || token.logo
+                  return (
+                    <div key={token.address} className="flex items-center justify-between p-2 rounded-lg hover:bg-gray-800/50">
+                      <div className="flex items-center space-x-2">
+                        {displayLogo ? (
+                          <img src={displayLogo} alt={displaySymbol} className="w-6 h-6 rounded-full" onError={(e) => { e.currentTarget.style.display = 'none' }} />
+                        ) : (
+                          <div className="w-6 h-6 bg-gradient-to-r from-cyan-500/20 to-purple-500/20 rounded-full flex items-center justify-center text-white font-bold text-[10px]">
+                            {displaySymbol.slice(0, 3)}
+                          </div>
+                        )}
+                        <div>
+                          <div className="text-sm font-medium">{displayName}</div>
+                          <div className="text-xs text-gray-400">{displaySymbol}</div>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => toggleTokenVisibility(token.address.toLowerCase())}
+                        className={`w-10 h-5 rounded-full transition-colors relative ${!hiddenTokens.has(token.address.toLowerCase()) ? 'bg-cyan-500' : 'bg-gray-600'}`}
+                      >
+                        <div className={`w-4 h-4 bg-white rounded-full absolute top-0.5 transition-transform ${!hiddenTokens.has(token.address.toLowerCase()) ? 'translate-x-5' : 'translate-x-0.5'}`} />
+                      </button>
+                    </div>
+                  )
+                })}
+              </div>
+              <div className="flex items-center justify-between mt-4 pt-3 border-t border-gray-700">
+                <button
+                  onClick={() => { setHiddenTokens(new Set()); localStorage.removeItem('dao-hidden-tokens') }}
+                  className="text-xs text-cyan-400 hover:text-cyan-300 transition-colors"
+                >
+                  Show All
+                </button>
+                <Button
+                  size="sm"
+                  onClick={() => setShowTokenSettings(false)}
+                  className="bg-cyan-600 hover:bg-cyan-700 text-white text-xs rounded-lg"
+                >
+                  Done
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* OEC Staking Positions */}
         <Card id="staking" className="border border-gray-700 bg-[#030712] rounded-lg shadow-md shadow-black/50 overflow-hidden scroll-mt-[200px]">
@@ -1188,7 +1331,7 @@ export function Portfolio() {
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                   {MOCK_ARTIVYA_NFTS.map((nft) => {
-                    const nftUsd = nft.price * getPrice('OEC')
+                    const nftUsd = nft.price * getPrice(OEC_ADDRESS)
                     return (
                       <Card key={nft.id} className="p-3 border border-pink-500/20 bg-gradient-to-br from-pink-500/5 to-purple-500/5 hover:from-pink-500/10 hover:to-purple-500/10 transition-all duration-200">
                         <div className="flex items-center space-x-3">
