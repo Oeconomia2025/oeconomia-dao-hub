@@ -231,7 +231,7 @@ export function Portfolio() {
 
       for (const token of pricingTokens) {
         // USDC = $1
-        if (token.symbol === 'USDC') { prices['USDC'] = 1; continue }
+        if (token.symbol === 'USDC') { prices['USDC'] = 1; prices[token.address.toLowerCase()] = 1; continue }
 
         // Use Uniswap WETH address for ETH/WETH when querying quoter
         const quoterAddress = (token.symbol === 'ETH' || token.symbol === 'WETH')
@@ -249,7 +249,7 @@ export function Portfolio() {
               args: [{ tokenIn: quoterAddress, tokenOut: USDC_ADDRESS, amountIn: parseUnits('1', token.decimals), fee, sqrtPriceLimitX96: 0n }],
             })
             const usdPrice = parseFloat(formatUnits(result.result[0], 6))
-            if (usdPrice > 0) { prices[token.symbol] = usdPrice; priceFound = true; break }
+            if (usdPrice > 0) { prices[token.symbol] = usdPrice; prices[token.address.toLowerCase()] = usdPrice; priceFound = true; break }
           } catch { continue }
         }
 
@@ -265,7 +265,7 @@ export function Portfolio() {
               })
               const wethAmount = parseFloat(formatUnits(result.result[0], 18))
               if (wethAmount > 0 && prices['ETH']) {
-                prices[token.symbol] = wethAmount * prices['ETH']; priceFound = true; break
+                prices[token.symbol] = wethAmount * prices['ETH']; prices[token.address.toLowerCase()] = wethAmount * prices['ETH']; priceFound = true; break
               } else if (wethAmount > 0) {
                 for (const wethFee of FEE_TIERS) {
                   try {
@@ -276,7 +276,7 @@ export function Portfolio() {
                       args: [{ tokenIn: UNISWAP_WETH, tokenOut: USDC_ADDRESS, amountIn: parseUnits('1', 18), fee: wethFee, sqrtPriceLimitX96: 0n }],
                     })
                     const wethUsd = parseFloat(formatUnits(wethResult.result[0], 6))
-                    if (wethUsd > 0) { prices[token.symbol] = wethAmount * wethUsd; priceFound = true; break }
+                    if (wethUsd > 0) { prices[token.symbol] = wethAmount * wethUsd; prices[token.address.toLowerCase()] = wethAmount * wethUsd; priceFound = true; break }
                   } catch { continue }
                 }
                 if (priceFound) break
@@ -303,7 +303,7 @@ export function Portfolio() {
               const isToken0 = token0.toLowerCase() === token.address.toLowerCase()
               const tokenReserve = parseFloat(formatUnits(isToken0 ? reserves[0] : reserves[1], token.decimals))
               const usdcReserve = parseFloat(formatUnits(isToken0 ? reserves[1] : reserves[0], 6))
-              if (tokenReserve > 0) { prices[token.symbol] = usdcReserve / tokenReserve; priceFound = true }
+              if (tokenReserve > 0) { const p = usdcReserve / tokenReserve; prices[token.symbol] = p; prices[token.address.toLowerCase()] = p; priceFound = true }
             }
           } catch {}
         }
@@ -313,12 +313,11 @@ export function Portfolio() {
         if (token.symbol === 'WETH' && prices['WETH'] && !prices['ETH']) prices['ETH'] = prices['WETH']
       }
 
-      // Also store prices by lowercase address for address-based lookups
-      for (const t of pricingTokens) {
-        const a = t.address.toLowerCase()
-        if (prices[t.symbol] !== undefined) prices[a] = prices[t.symbol]
-      }
-      prices['eth'] = prices['ETH'] || 0
+      // Ensure WETH addresses and ETH alias are mapped
+      const ethPrice = prices['ETH'] || 0
+      prices['eth'] = ethPrice
+      prices['0xfff9976782d46cc05630d1f6ebab18b2324d6b14'] = ethPrice
+      prices['0x34b11f6b8f78fa010bbca71bc7fe79daa811b89f'] = ethPrice
 
       setTokenPrices(prices)
     }
