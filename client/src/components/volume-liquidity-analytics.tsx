@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
+  BarChart, Bar, XAxis, YAxis, Tooltip,
   ResponsiveContainer, AreaChart, Area,
 } from 'recharts';
 import {
@@ -196,7 +196,6 @@ export function VolumeLiquidityAnalytics({ contractAddress }: VolumeLiquidityAna
         <ChartCard title="Trading Volume">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={data} margin={{ top: 0, right: 5, bottom: 0, left: -15 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
               <XAxis
                 dataKey="date"
                 stroke="#6b7280"
@@ -231,7 +230,6 @@ export function VolumeLiquidityAnalytics({ contractAddress }: VolumeLiquidityAna
                   <stop offset="100%" stopColor="#10b981" stopOpacity={0.05} />
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
               <XAxis
                 dataKey="date"
                 stroke="#6b7280"

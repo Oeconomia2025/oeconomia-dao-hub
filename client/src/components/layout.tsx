@@ -253,6 +253,27 @@ export function Layout({ children }: LayoutProps) {
           </DropdownMenu>
 
 
+          {/* OECsplorer */}
+          <button
+            onClick={() => window.open('https://oecsplorer.oeconomia.io/', '_blank')}
+            className={`w-full flex items-center ${
+              sidebarCollapsed ? 'justify-center px-2' : 'space-x-3 px-3'
+            } py-2 rounded-lg text-left transition-colors group relative text-white hover:bg-white/5`}
+            style={{
+              background: 'linear-gradient(#000000, #000000) padding-box, linear-gradient(45deg, #c0a44c, #ffffff) border-box',
+              border: '2px solid transparent'
+            }}
+            title={sidebarCollapsed ? "OECsplorer" : undefined}
+          >
+            <img src="https://pub-37d61a7eb7ae45898b46702664710cb2.r2.dev/images/Globe%20White.png" alt="OECsplorer" className="w-5 h-5 flex-shrink-0" />
+            {!sidebarCollapsed && <span className="whitespace-nowrap">OECsplorer</span>}
+            {sidebarCollapsed && (
+              <div className="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-50">
+                OECsplorer
+              </div>
+            )}
+          </button>
+
           {/* Connect Wallet */}
           <WalletConnect collapsed={sidebarCollapsed} />
         </div>

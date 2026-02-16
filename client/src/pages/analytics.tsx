@@ -1019,34 +1019,49 @@ export default function Analytics() {
                   </tr>
                 </thead>
                 <tbody>
-                  {sortedTableData.map((row, i) => (
-                    <tr
-                      key={row.name}
-                      className="border-b border-gray-800/50 hover:bg-gray-800/30 transition-colors duration-150"
-                    >
-                      <td className="px-5 py-4 font-medium text-white">{row.name}</td>
-                      <td className="px-5 py-4 text-gray-300">{row.tvl}</td>
-                      <td className="px-5 py-4 text-gray-300">{row.volume}</td>
-                      <td className="px-5 py-4 text-gray-300">{row.users.toLocaleString()}</td>
-                      <td className="px-5 py-4 text-gray-300">{row.fees}</td>
-                      <td className="px-5 py-4 text-gray-300">{row.apy}</td>
-                      <td className="px-5 py-4">
-                        <span
-                          className={`flex items-center gap-1 text-xs font-semibold ${
-                            row.change >= 0 ? "text-emerald-400" : "text-red-400"
-                          }`}
-                        >
-                          {row.change >= 0 ? (
-                            <TrendingUp className="w-3 h-3" />
-                          ) : (
-                            <TrendingDown className="w-3 h-3" />
-                          )}
-                          {row.change >= 0 ? "+" : ""}
-                          {row.change.toFixed(1)}%
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
+                  {sortedTableData.map((row, i) => {
+                    // Map table row names back to protocol filter values
+                    const rowToProtocol: Record<string, Protocol> = {
+                      "Staking": "Staking",
+                      "DEX/Eloqura": "DEX",
+                      "Bridge": "Bridge",
+                      "Lending/Alluria": "Lending",
+                      "NFT/Artivya": "NFT",
+                    };
+                    return (
+                      <tr
+                        key={row.name}
+                        className="border-b border-gray-800/50 hover:bg-gray-800/30 transition-colors duration-150 cursor-pointer"
+                        onClick={() => {
+                          const protocol = rowToProtocol[row.name];
+                          if (protocol) setActiveProtocol(protocol);
+                          window.scrollTo({ top: 0, behavior: 'smooth' });
+                        }}
+                      >
+                        <td className="px-5 py-4 font-medium text-white">{row.name}</td>
+                        <td className="px-5 py-4 text-gray-300">{row.tvl}</td>
+                        <td className="px-5 py-4 text-gray-300">{row.volume}</td>
+                        <td className="px-5 py-4 text-gray-300">{row.users.toLocaleString()}</td>
+                        <td className="px-5 py-4 text-gray-300">{row.fees}</td>
+                        <td className="px-5 py-4 text-gray-300">{row.apy}</td>
+                        <td className="px-5 py-4">
+                          <span
+                            className={`flex items-center gap-1 text-xs font-semibold ${
+                              row.change >= 0 ? "text-emerald-400" : "text-red-400"
+                            }`}
+                          >
+                            {row.change >= 0 ? (
+                              <TrendingUp className="w-3 h-3" />
+                            ) : (
+                              <TrendingDown className="w-3 h-3" />
+                            )}
+                            {row.change >= 0 ? "+" : ""}
+                            {row.change.toFixed(1)}%
+                          </span>
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>

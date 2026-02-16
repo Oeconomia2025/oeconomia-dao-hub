@@ -688,6 +688,7 @@ export function Portfolio() {
             {/* Section Nav */}
             <nav className="flex items-center space-x-1 mt-3 pb-0.5 overflow-x-auto">
               {[
+                { id: 'top', label: 'Top' },
                 { id: 'holdings', label: 'Holdings' },
                 { id: 'staking', label: 'OEC Staking' },
                 { id: 'eloqura', label: 'Eloqura LP' },
@@ -696,7 +697,13 @@ export function Portfolio() {
               ].map((item) => (
                 <button
                   key={item.id}
-                  onClick={() => document.getElementById(item.id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+                  onClick={() => {
+                    if (item.id === 'top') {
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    } else {
+                      document.getElementById(item.id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                  }}
                   className={`w-[90px] text-center py-1.5 text-xs font-medium transition-colors whitespace-nowrap ${
                     activeSection === item.id
                       ? 'text-white'

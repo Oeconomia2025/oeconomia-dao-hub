@@ -3,6 +3,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { TrendingUp, BarChart3, ArrowUpDown, Droplets, DollarSign } from "lucide-react";
 import type { TokenData } from "@shared/schema";
+import { useNetworkStatus } from "@/hooks/use-token-data";
 
 interface TokenOverviewProps {
   tokenData?: any; // Accept both TokenData and Live Coin Watch format
@@ -64,27 +65,32 @@ export function TokenOverview({ tokenData, isLoading }: TokenOverviewProps) {
 
   const formatSupply = (supply: number) => `${formatNumber(supply)} ${symbol}`;
 
+  const { data: networkStatus } = useNetworkStatus();
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2">
-      {/* Price Card */}
+      {/* ETH Network Card */}
       <Card className="p-4 border border-gray-800/60 bg-[#0b0f16] hover:border-gray-700 transition-all duration-200 shadow-md shadow-black/50 rounded-lg relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-white/[0.04] via-white/[0.01] to-transparent pointer-events-none"></div>
         <div className="relative z-10">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-gray-200 text-sm font-medium">Current Price</h3>
-            <span className={`px-1.5 py-0.5 rounded text-xs font-medium ${
-              priceChange24h >= 0
-                ? 'bg-green-600/70 text-green-100'
-                : 'bg-red-600/70 text-red-100'
-            }`}>
-              {priceChange24h >= 0 ? '+' : ''}
-              {priceChange24h.toFixed(1)}%
-            </span>
+            <h3 className="text-gray-200 text-sm font-medium">ETH Network</h3>
+            <img src="/eth-logo.png" alt="ETH" className="w-7 h-7 opacity-70" />
           </div>
-          <div className="text-2xl font-bold text-white drop-shadow-sm">${formatPrice(price)}</div>
-          <div className="text-sm text-gray-400 mt-2">
-            24h Change
-          </div>
+          {networkStatus ? (
+            <>
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-400">Gas Price</span>
+                <span className="text-green-400">{networkStatus.gasPrice} Gwei</span>
+              </div>
+              <div className="flex justify-between text-sm mt-2">
+                <span className="text-gray-400">Block</span>
+                <span className="text-white">{networkStatus.blockNumber.toLocaleString()}</span>
+              </div>
+            </>
+          ) : (
+            <div className="text-sm text-gray-400">Unable to fetch network status</div>
+          )}
         </div>
       </Card>
 

@@ -1,6 +1,5 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowUpDown, Search, FlaskConical } from "lucide-react";
 import { useState } from "react";
 import { TestnetModal } from "./testnet-modal";
 
@@ -11,9 +10,6 @@ interface QuickActionsProps {
 export function QuickActions({ contractAddress }: QuickActionsProps) {
   const [showTestnetModal, setShowTestnetModal] = useState(false);
 
-  const pancakeSwapUrl = `https://app.uniswap.org/swap?outputCurrency=0xb62870F6861BF065F5a6782996AB070EB9385d05`;
-  const bscscanUrl = `https://etherscan.io/address/0xb62870F6861BF065F5a6782996AB070EB9385d05`;
-
   return (
     <>
       <div>
@@ -21,31 +17,27 @@ export function QuickActions({ contractAddress }: QuickActionsProps) {
           <h3 className="text-lg font-semibold mb-4">Quick Actions</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <Button
-              asChild
               variant="outline"
-              className="bg-crypto-blue/10 hover:bg-crypto-blue/20 border-crypto-blue/30 rounded-lg p-4 h-auto flex-col space-y-2 group"
+              className="bg-crypto-blue/10 hover:bg-crypto-blue/20 border-crypto-blue/30 rounded-lg p-4 h-auto flex-col space-y-2 group cursor-default"
+              disabled
             >
-              <a href={pancakeSwapUrl} target="_blank" rel="noopener noreferrer">
-                <ArrowUpDown className="text-crypto-blue text-2xl group-hover:scale-110 transition-transform" />
-                <div className="text-center">
-                  <div className="font-medium">Trade on UniSwap</div>
-                  <div className="text-sm text-gray-400">Buy/Sell OEC tokens</div>
-                </div>
-              </a>
+              <img src="https://pub-37d61a7eb7ae45898b46702664710cb2.r2.dev/Eloqura.png" alt="Eloqura" className="w-8 h-8 rounded-full" />
+              <div className="text-center">
+                <div className="font-medium">Trade on Eloqura</div>
+                <div className="text-sm text-gray-400">Coming soon</div>
+              </div>
             </Button>
 
             <Button
-              asChild
               variant="outline"
-              className="bg-crypto-green/10 hover:bg-crypto-green/20 border-crypto-green/30 rounded-lg p-4 h-auto flex-col space-y-2 group"
+              className="bg-crypto-green/10 hover:bg-crypto-green/20 border-crypto-green/30 rounded-lg p-4 h-auto flex-col space-y-2 group cursor-default"
+              disabled
             >
-              <a href={bscscanUrl} target="_blank" rel="noopener noreferrer">
-                <Search className="text-crypto-green text-2xl group-hover:scale-110 transition-transform" />
-                <div className="text-center">
-                  <div className="font-medium">View on Etherscan</div>
-                  <div className="text-sm text-gray-400">Explore transactions</div>
-                </div>
-              </a>
+              <img src="https://pub-37d61a7eb7ae45898b46702664710cb2.r2.dev/Etherscan%20Darkmode.png" alt="Etherscan" className="w-8 h-8 rounded" />
+              <div className="text-center">
+                <div className="font-medium">View on Etherscan</div>
+                <div className="text-sm text-gray-400">Coming soon</div>
+              </div>
             </Button>
 
             <Button
@@ -53,7 +45,7 @@ export function QuickActions({ contractAddress }: QuickActionsProps) {
               onClick={() => setShowTestnetModal(true)}
               className="bg-crypto-gold/10 hover:bg-crypto-gold/20 border-crypto-gold/30 rounded-lg p-4 h-auto flex-col space-y-2 group"
             >
-              <FlaskConical className="text-crypto-gold text-2xl group-hover:scale-110 transition-transform" />
+              <img src="https://pub-37d61a7eb7ae45898b46702664710cb2.r2.dev/images/OEC%20Logo.png" alt="OEC" className="w-8 h-8 rounded-full group-hover:scale-110 transition-transform" />
               <div className="text-center">
                 <div className="font-medium">Testnet Version</div>
                 <div className="text-sm text-gray-400">Test deployment info</div>
@@ -63,9 +55,9 @@ export function QuickActions({ contractAddress }: QuickActionsProps) {
         </Card>
       </div>
 
-      <TestnetModal 
-        isOpen={showTestnetModal} 
-        onClose={() => setShowTestnetModal(false)} 
+      <TestnetModal
+        isOpen={showTestnetModal}
+        onClose={() => setShowTestnetModal(false)}
       />
     </>
   );

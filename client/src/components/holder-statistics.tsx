@@ -89,31 +89,21 @@ export function HolderStatistics({ contractAddress, tokenData }: HolderStatistic
           <div>
             <div className="flex justify-between mb-2">
               <span className="text-gray-400">Circulating Supply</span>
-              <span>
-                {tokenData ? 
-                  `${(tokenData.circulatingSupply / 2000000).toFixed(0)}M ${tokenData.symbol} (${((tokenData.circulatingSupply / tokenData.totalSupply) * 100).toFixed(0)}%)` :
-                  '95M TONE (95%)'
-                }
-              </span>
+              <span>0 OEC (0%)</span>
             </div>
-            <Progress 
-              value={tokenData ? (tokenData.circulatingSupply / tokenData.totalSupply) * 100 : 95} 
+            <Progress
+              value={0}
               className="h-2"
             />
           </div>
-          
+
           <div>
             <div className="flex justify-between mb-2">
               <span className="text-gray-400">Operations Reserve</span>
-              <span>
-                {tokenData ? 
-                  `${((tokenData.totalSupply - tokenData.circulatingSupply) / 1000000).toFixed(0)}M ${tokenData.symbol} (${(((tokenData.totalSupply - tokenData.circulatingSupply) / tokenData.totalSupply) * 100).toFixed(0)}%)` :
-                  '5M TONE (5%)'
-                }
-              </span>
+              <span>0 OEC (0%)</span>
             </div>
-            <Progress 
-              value={tokenData ? ((tokenData.totalSupply - tokenData.circulatingSupply) / tokenData.totalSupply) * 100 : 5} 
+            <Progress
+              value={0}
               className="h-2"
             />
           </div>

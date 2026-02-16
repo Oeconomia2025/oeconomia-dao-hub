@@ -83,7 +83,7 @@ export function WalletConnect({ collapsed = false }: WalletConnectProps) {
 
   if (isConnected && address) {
     return (
-      <Button 
+      <button
         onClick={() => {
           // Clear localStorage wallet data
           if (typeof window !== 'undefined') {
@@ -92,14 +92,14 @@ export function WalletConnect({ collapsed = false }: WalletConnectProps) {
             localStorage.removeItem('wagmi.connected')
             localStorage.removeItem('wagmi.recentConnectorId')
           }
-          
+
           disconnect()
-          
+
           // Force a small delay then reload to ensure clean state
           setTimeout(() => {
             window.location.reload()
           }, 500)
-          
+
           toast({
             title: "Wallet disconnected",
             description: "Your wallet has been disconnected successfully",
@@ -107,13 +107,18 @@ export function WalletConnect({ collapsed = false }: WalletConnectProps) {
         }}
         className={`w-full flex items-center ${
           collapsed ? 'justify-center px-2' : 'space-x-3 px-3'
-        } py-2 rounded-lg text-white font-medium shadow-lg transition-all duration-200 hover:opacity-90 border-0`}
+        } py-2 rounded-lg text-left transition-colors group relative text-white font-medium shadow-lg`}
         style={{ background: 'linear-gradient(45deg, #00d4ff, #ff00ff)' }}
         title={collapsed ? formatAddress(address) : undefined}
       >
         <Wallet className="w-5 h-5 flex-shrink-0" />
         {!collapsed && <span className="whitespace-nowrap">{formatAddress(address)}</span>}
-      </Button>
+        {collapsed && (
+          <div className="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-50">
+            {formatAddress(address)}
+          </div>
+        )}
+      </button>
     )
   }
 

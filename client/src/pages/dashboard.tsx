@@ -87,6 +87,11 @@ export default function Dashboard() {
     <Layout>
       <div className="p-4 md:p-5" style={{ background: 'linear-gradient(180deg, #080c12 0%, #0a0e15 50%, #090d13 100%)' }}>
         <div className="max-w-7xl mx-auto space-y-3">
+          {/* Placeholder notice */}
+          <div className="text-sm text-gray-500 italic">
+            Ethereum is currently set as a placeholder for Oeconomia token data.
+          </div>
+
           {/* Token Overview Cards - Use Live Data */}
           {isEthLoading ? <LoadingSpinner /> : <TokenOverview tokenData={defaultTokenData} />}
 
