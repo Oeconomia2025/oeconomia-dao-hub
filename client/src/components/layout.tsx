@@ -3,7 +3,7 @@ import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
-  BarChart3,
+  LayoutDashboard,
   Wallet,
   TrendingUp,
   Menu,
@@ -81,11 +81,10 @@ export function Layout({ children }: LayoutProps) {
   };
 
   const sidebarItems = [
-    { icon: BarChart3, label: 'Dashboard', path: '/', active: location === '/' || location === '/dashboard' },
+    { icon: LayoutDashboard, label: 'Dashboard', path: '/', active: location === '/' || location === '/dashboard' },
     { icon: TrendingUp, label: 'Analytics', path: '/analytics', active: location === '/analytics' },
     { icon: Wallet, label: 'Portfolio', path: '/portfolio', active: location === '/portfolio' },
     { icon: Layers, label: 'Ecosystem', path: '/ecosystem', active: location.startsWith('/ecosystem') },
-    { icon: Vote, label: 'Governance', path: '/governance', active: location === '/governance' },
   ];
 
   // Token price pills data
@@ -276,6 +275,19 @@ export function Layout({ children }: LayoutProps) {
 
           {/* Connect Wallet */}
           <WalletConnect collapsed={sidebarCollapsed} />
+
+          {/* Network indicator */}
+          <div
+            className={`flex items-center ${
+              sidebarCollapsed ? "justify-center" : "space-x-2 px-3"
+            } py-1.5 text-xs text-gray-500`}
+          >
+            <span
+              className="w-2 h-2 rounded-full bg-emerald-500 flex-shrink-0"
+              style={{ boxShadow: "0 0 6px #22C55E44" }}
+            />
+            {!sidebarCollapsed && <span className="whitespace-nowrap">Sepolia Testnet</span>}
+          </div>
         </div>
       </aside>
 
