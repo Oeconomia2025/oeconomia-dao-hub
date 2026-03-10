@@ -1,4 +1,4 @@
-# Architecture
+# Architecture & Scaffold
 
 High-level overview of the OEC DAO Hub architecture and data flow.
 
