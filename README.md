@@ -1,4 +1,4 @@
-# Oeconomia Cryptocurrency Dashboard
+# Oeconomia Dashboard
 
 A comprehensive cryptocurrency dashboard and governance platform for the Oeconomia ecosystem, providing advanced portfolio tracking, real-time market insights, and a fully decentralized governance infrastructure.
 
