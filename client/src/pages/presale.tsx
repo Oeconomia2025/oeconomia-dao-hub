@@ -42,6 +42,7 @@ import {
   usdcToOec,
 } from "@/services/presale-contract";
 import { cn } from "@/lib/utils";
+import { EcosystemCube } from "@/components/ecosystem-cube";
 
 // ============================================================
 // Types
@@ -151,13 +152,16 @@ export default function Presale() {
   // ============================================================
   return (
     <div
-      className="min-h-screen text-white"
-      style={{ background: "linear-gradient(180deg, #080c12 0%, #0a0e15 50%, #090d13 100%)" }}
+      className="min-h-screen text-white relative"
+      style={{ background: "#000000" }}
     >
+      {/* Full-screen 3D cube background */}
+      <EcosystemCube className="fixed inset-0 w-full h-full z-0" />
+
       {/* ============================== */}
       {/* STANDALONE HEADER              */}
       {/* ============================== */}
-      <header className="sticky top-0 z-50 bg-gray-950/90 backdrop-blur-sm border-b border-gray-700">
+      <header className="sticky top-0 z-50 bg-gray-950/80 backdrop-blur-sm border-b border-gray-700">
         <div className="max-w-5xl mx-auto flex items-center justify-between h-14 px-4 md:px-6">
           {/* Left — logo + back */}
           <div className="flex items-center gap-3">
@@ -183,7 +187,7 @@ export default function Presale() {
         </div>
       </header>
 
-      <div className="p-4 md:p-6 lg:p-8">
+      <div className="relative z-10 p-4 md:p-6 lg:p-8">
         <div className="max-w-5xl mx-auto">
 
           {/* ============================== */}
@@ -228,7 +232,7 @@ export default function Presale() {
           {/* PRESALE WIDGET                 */}
           {/* ============================== */}
           <section className="mt-4">
-            <Card className="bg-gray-900/80 border-gray-700 overflow-hidden">
+            <Card className="bg-gray-900/20 border-gray-700/50 overflow-hidden backdrop-blur-xl">
               {/* Gradient top bar */}
               <div className="h-1 w-full" style={{ background: "linear-gradient(90deg, #00d4ff, #ff00ff)" }} />
 
@@ -279,11 +283,11 @@ export default function Presale() {
 
                 {/* Price info */}
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-gray-800/60 rounded-lg p-3 text-center">
+                  <div className="bg-gray-800/30 rounded-lg p-3 text-center">
                     <p className="text-xs text-gray-500">Price per OEC</p>
                     <p className="text-lg font-bold text-cyan-400">${PRESALE_PRICE}</p>
                   </div>
-                  <div className="bg-gray-800/60 rounded-lg p-3 text-center">
+                  <div className="bg-gray-800/30 rounded-lg p-3 text-center">
                     <p className="text-xs text-gray-500">Your Allocation</p>
                     <p className="text-lg font-bold text-purple-400">
                       {isConnected ? `${presale.userAllocation.toLocaleString()} OEC` : "—"}
@@ -427,7 +431,7 @@ export default function Presale() {
               500,000,000 OEC total supply &mdash; strategically allocated for ecosystem growth
             </p>
 
-            <Card className="bg-gray-900/80 border-gray-700">
+            <Card className="bg-gray-900/20 border-gray-700/50 backdrop-blur-xl">
               <CardContent className="p-6 space-y-4">
                 {[
                   { label: "Presale", pct: 35, color: "#00d4ff" },
@@ -468,7 +472,7 @@ export default function Presale() {
             </p>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Card className="bg-gray-900/80 border-gray-700 group hover:border-cyan-500/30 transition-colors">
+              <Card className="bg-gray-900/20 border-gray-700/50 backdrop-blur-xl group hover:border-cyan-500/30 transition-colors">
                 <CardContent className="p-6 text-center space-y-3">
                   <div className="w-14 h-14 mx-auto rounded-full bg-cyan-500/10 flex items-center justify-center">
                     <BarChart3 className="w-7 h-7 text-cyan-400" />
@@ -481,7 +485,7 @@ export default function Presale() {
                 </CardContent>
               </Card>
 
-              <Card className="bg-gray-900/80 border-gray-700 group hover:border-purple-500/30 transition-colors">
+              <Card className="bg-gray-900/20 border-gray-700/50 backdrop-blur-xl group hover:border-purple-500/30 transition-colors">
                 <CardContent className="p-6 text-center space-y-3">
                   <div className="w-14 h-14 mx-auto rounded-full bg-purple-500/10 flex items-center justify-center">
                     <Shield className="w-7 h-7 text-purple-400" />
@@ -555,7 +559,7 @@ export default function Presale() {
                 <Card
                   key={item.title}
                   className={cn(
-                    "bg-gray-900/80 border-gray-700 transition-all duration-200",
+                    "bg-gray-900/20 border-gray-700/50 backdrop-blur-xl transition-all duration-200",
                     item.borderHover
                   )}
                 >
@@ -586,7 +590,7 @@ export default function Presale() {
               </span>
             </h2>
 
-            <Card className="bg-gray-900/80 border-gray-700">
+            <Card className="bg-gray-900/20 border-gray-700/50 backdrop-blur-xl">
               <CardContent className="p-6">
                 <Accordion type="single" collapsible className="w-full">
                   {[
