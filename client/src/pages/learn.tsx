@@ -106,12 +106,12 @@ export default function Learn() {
   const getResourceUrl = (title: string) => {
     // Map resource titles to URLs (simplified)
     const urlMap: { [key: string]: string } = {
-      "Oeconomia Whitepaper": "https://oeconomia.tech/whitepaper",
-      "Tokenomics Guide": "https://oeconomia.tech/tokenomics",
-      "Governance Overview": "https://oeconomia.tech/governance",
-      "Getting Started Guide": "https://oeconomia.tech/getting-started",
-      "Staking Tutorial": "https://oeconomia.tech/staking-guide",
-      "Portfolio Management": "https://oeconomia.tech/portfolio",
+      "Oeconomia Whitepaper": "https://oeconomia.io/whitepaper",
+      "Tokenomics Guide": "https://oeconomia.io/tokenomics",
+      "Governance Overview": "https://oeconomia.io/governance",
+      "Getting Started Guide": "https://oeconomia.io/getting-started",
+      "Staking Tutorial": "https://oeconomia.io/staking-guide",
+      "Portfolio Management": "https://oeconomia.io/portfolio",
       "What is DeFi?": "https://ethereum.org/en/defi/",
       "Wallet Security": "https://ethereum.org/en/security/",
       "Understanding Gas Fees": "https://ethereum.org/en/developers/docs/gas/",
@@ -182,21 +182,21 @@ export default function Learn() {
           description: "Complete technical documentation and roadmap",
           type: "PDF",
           icon: FileText,
-          url: "https://oeconomia.tech/whitepaper"
+          url: "https://oeconomia.io/whitepaper"
         },
         {
           title: "Tokenomics Guide",
           description: "Understanding OEC token distribution and utility",
           type: "Article",
           icon: TrendingUp,
-          url: "https://oeconomia.tech/tokenomics"
+          url: "https://oeconomia.io/tokenomics"
         },
         {
           title: "Governance Overview",
           description: "How to participate in protocol decisions",
           type: "Guide",
           icon: Users,
-          url: "https://oeconomia.tech/governance"
+          url: "https://oeconomia.io/governance"
         }
       ]
     },
@@ -211,21 +211,21 @@ export default function Learn() {
           description: "Your first steps in the Oeconomia ecosystem",
           type: "Tutorial",
           icon: PlayCircle,
-          url: "https://oeconomia.tech/getting-started"
+          url: "https://oeconomia.io/getting-started"
         },
         {
           title: "Staking Tutorial",
           description: "How to stake OEC tokens and earn rewards",
           type: "Video",
           icon: Video,
-          url: "https://oeconomia.tech/staking-guide"
+          url: "https://oeconomia.io/staking-guide"
         },
         {
           title: "Portfolio Management",
           description: "Track and optimize your DeFi positions",
           type: "Guide",
           icon: TrendingUp,
-          url: "https://oeconomia.tech/portfolio"
+          url: "https://oeconomia.io/portfolio"
         }
       ]
     },

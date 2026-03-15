@@ -11,34 +11,50 @@ import { Layout } from "@/components/layout"
 
 // Known token metadata for display (logos, friendly names)
 const KNOWN_TOKEN_META: Record<string, { symbol: string; name: string; logo: string }> = {
-  '0x2b2fb8df4ac5d394f0d5674d7a54802e42a06aba': { symbol: 'OEC', name: 'Oeconomia', logo: '/oec-logo.png' },
+  '0x00904218319a045a96d776ec6a970f54741208e6': { symbol: 'OEC', name: 'Oeconomia', logo: '/oec-logo.png' },
   '0x1c7d4b196cb0c7b01d743fbc6116a902379c7238': { symbol: 'USDC', name: 'USD Coin', logo: 'https://assets.coingecko.com/coins/images/6319/small/USD_Coin_icon.png' },
   '0x779877a7b0d9e8603169ddbd7836e478b4624789': { symbol: 'LINK', name: 'Chainlink', logo: 'https://assets.coingecko.com/coins/images/877/small/chainlink-new-logo.png' },
   '0xfff9976782d46cc05630d1f6ebab18b2324d6b14': { symbol: 'WETH', name: 'Wrapped Ether (Uniswap)', logo: 'https://assets.coingecko.com/coins/images/2518/small/weth.png' },
   '0x34b11f6b8f78fa010bbca71bc7fe79daa811b89f': { symbol: 'WETH', name: 'Wrapped Ether (Eloqura)', logo: 'https://assets.coingecko.com/coins/images/2518/small/weth.png' },
   '0x5bb220afc6e2e008cb2302a83536a019ed245aa2': { symbol: 'AAVE', name: 'Aave', logo: 'https://assets.coingecko.com/coins/images/12645/small/AAVE.png' },
   '0x3e622317f8c93f7328350cf0b56d9ed4c620c5d6': { symbol: 'DAI', name: 'Dai Stablecoin', logo: 'https://assets.coingecko.com/coins/images/9956/small/Badge_Dai.png' },
+  '0x5cdbed8ed63554fde6653f02ae1c4d6d5ae71ad3': { symbol: 'ALUR', name: 'Alluria Reward', logo: 'https://pub-37d61a7eb7ae45898b46702664710cb2.r2.dev/With%20Border/ALUR%20no%20Border.png' },
+  '0x41b07704b9d671615a3e9f83c06d85cb38bbf4d9': { symbol: 'ALUD', name: 'Alluria Dollar', logo: 'https://pub-37d61a7eb7ae45898b46702664710cb2.r2.dev/ALUD.png' },
+  '0x4feb15d0644e5c7bb64dcd85744f0f2ab5f7a253': { symbol: 'ELOQ', name: 'Eloqura', logo: 'https://pub-37d61a7eb7ae45898b46702664710cb2.r2.dev/Eloqura.png' },
 }
 
 // Tokens to always price (for staking/LP calculations even if not in wallet)
 const PRICING_TOKENS = [
-  { address: '0x2b2fb8df4ac5d394f0d5674d7a54802e42a06aba', symbol: 'OEC', decimals: 18 },
+  { address: '0x00904218319a045a96d776ec6a970f54741208e6', symbol: 'OEC', decimals: 18 },
   { address: '0x1c7d4b196cb0c7b01d743fbc6116a902379c7238', symbol: 'USDC', decimals: 6 },
   { address: '0x779877a7b0d9e8603169ddbd7836e478b4624789', symbol: 'LINK', decimals: 18 },
   { address: '0xfff9976782d46cc05630d1f6ebab18b2324d6b14', symbol: 'WETH', decimals: 18 },
   { address: '0x34b11f6b8f78fa010bbca71bc7fe79daa811b89f', symbol: 'WETH', decimals: 18 },
 ]
 
-const OEC_ADDRESS = '0x2b2fb8df4ac5d394f0d5674d7a54802e42a06aba'
+const OEC_ADDRESS = '0x00904218319a045a96d776ec6a970f54741208e6'
 
 // Known token address → symbol/name map for resolution
 const TOKEN_MAP: Record<string, { symbol: string; name: string; decimals: number }> = {
-  '0x2b2fb8df4ac5d394f0d5674d7a54802e42a06aba': { symbol: 'OEC', name: 'Oeconomia', decimals: 18 },
+  '0x00904218319a045a96d776ec6a970f54741208e6': { symbol: 'OEC', name: 'Oeconomia', decimals: 18 },
   '0x1c7d4b196cb0c7b01d743fbc6116a902379c7238': { symbol: 'USDC', name: 'USD Coin', decimals: 6 },
   '0x779877a7b0d9e8603169ddbd7836e478b4624789': { symbol: 'LINK', name: 'Chainlink', decimals: 18 },
   '0xfff9976782d46cc05630d1f6ebab18b2324d6b14': { symbol: 'WETH', name: 'Wrapped Ether (Uniswap)', decimals: 18 },
   '0x34b11f6b8f78fa010bbca71bc7fe79daa811b89f': { symbol: 'WETH', name: 'Wrapped Ether (Eloqura)', decimals: 18 },
+  '0x5cdbed8ed63554fde6653f02ae1c4d6d5ae71ad3': { symbol: 'ALUR', name: 'Alluria Reward', decimals: 18 },
+  '0x41b07704b9d671615a3e9f83c06d85cb38bbf4d9': { symbol: 'ALUD', name: 'Alluria Dollar', decimals: 18 },
+  '0x4feb15d0644e5c7bb64dcd85744f0f2ab5f7a253': { symbol: 'ELOQ', name: 'Eloqura', decimals: 18 },
 }
+
+const ELOQURA_WETH = '0x34b11f6b8f78fa010bbca71bc7fe79daa811b89f' as `0x${string}`
+
+// Tokens not on Uniswap V3 — skip quoter to avoid slow timeout RPC calls
+const SKIP_QUOTER = new Set([
+  '0x00904218319a045a96d776ec6a970f54741208e6', // OEC
+  '0x5cdbed8ed63554fde6653f02ae1c4d6d5ae71ad3', // ALUR
+  '0x41b07704b9d671615a3e9f83c06d85cb38bbf4d9', // ALUD
+  '0x4feb15d0644e5c7bb64dcd85744f0f2ab5f7a253', // ELOQ
+])
 
 function resolveToken(addr: string) {
   return TOKEN_MAP[addr.toLowerCase()] || { symbol: addr.slice(0, 6) + '...', name: 'Unknown Token', decimals: 18 }
@@ -90,11 +106,67 @@ const PAIR_ABI = [
   { name: 'balanceOf', type: 'function', inputs: [{ name: 'owner', type: 'address' }], outputs: [{ name: '', type: 'uint256' }], stateMutability: 'view' },
 ] as const
 
-// Mock Alluria lending positions (from Alluria dashboard)
-const MOCK_ALLURIA_POSITIONS = [
-  { id: '1', collateral: 'WBTC', collateralAmount: 0.05, collateralValue: 3367.00, borrowed: 2450, ratio: 137.5, liquidationPrice: 59000, interestRate: 3.2 },
-  { id: '2', collateral: 'WETH', collateralAmount: 1.25, collateralValue: 4275.63, borrowed: 3200, ratio: 133.6, liquidationPrice: 2816, interestRate: 3.1 },
-]
+// Alluria Lending Protocol — AluriaLens contract for read-only queries
+const ALLURIA_LENS = '0x150485AC97153Ac772D43736564ccf7122d92bcf' as `0x${string}`
+
+const ALLURIA_COLLATERAL_META: Record<string, { symbol: string; decimals: number; logo: string }> = {
+  '0x29f2d40b0605204364af54ec677bd022da425d03': { symbol: 'WBTC', decimals: 8, logo: 'https://tokens.1inch.io/0x2260fac5e5542a773aa44fbcfedf7c193bc2c599.png' },
+  '0x34b11f6b8f78fa010bbca71bc7fe79daa811b89f': { symbol: 'WETH', decimals: 18, logo: 'https://assets.coingecko.com/coins/images/2518/small/weth.png' },
+  '0x779877a7b0d9e8603169ddbd7836e478b4624789': { symbol: 'LINK', decimals: 18, logo: 'https://assets.coingecko.com/coins/images/877/small/chainlink-new-logo.png' },
+}
+
+const ALLURIA_LENS_ABI = [
+  {
+    inputs: [{ name: 'owner', type: 'address' }],
+    name: 'getAllUserTroves',
+    outputs: [{
+      components: [
+        { name: 'collateral', type: 'address' },
+        { name: 'collateralAmount', type: 'uint256' },
+        { name: 'debt', type: 'uint256' },
+        { name: 'collateralRatio', type: 'uint256' },
+        { name: 'liquidationPrice', type: 'uint256' },
+        { name: 'collateralValueUSD', type: 'uint256' },
+      ],
+      name: 'infos',
+      type: 'tuple[]',
+    }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [{ name: 'owner', type: 'address' }],
+    name: 'getUserStabilityPoolPosition',
+    outputs: [{
+      components: [
+        { name: 'deposit', type: 'uint256' },
+        { name: 'gainTokens', type: 'address[]' },
+        { name: 'gainAmounts', type: 'uint256[]' },
+        { name: 'pendingOEC', type: 'uint256' },
+      ],
+      name: 'position',
+      type: 'tuple',
+    }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+] as const
+
+interface AlluriaTrove {
+  collateral: string
+  collateralAmount: bigint
+  debt: bigint
+  collateralRatio: bigint
+  liquidationPrice: bigint
+  collateralValueUSD: bigint
+}
+
+interface AlluriaStabilityPosition {
+  deposit: bigint
+  gainTokens: string[]
+  gainAmounts: bigint[]
+  pendingOEC: bigint
+}
 
 // Mock Artivya NFTs (from Artivya profile)
 const MOCK_ARTIVYA_NFTS = [
@@ -139,8 +211,10 @@ export function Portfolio() {
   const [holdingsExpanded, setHoldingsExpanded] = useState(true)
   const [stakingExpanded, setStakingExpanded] = useState<boolean | null>(null)
   const [lpExpanded, setLpExpanded] = useState<boolean | null>(null)
-  const [alluriaExpanded, setAlluriaExpanded] = useState(MOCK_ALLURIA_POSITIONS.length > 0)
+  const [alluriaExpanded, setAlluriaExpanded] = useState(true)
   const [artivyaExpanded, setArtivyaExpanded] = useState(MOCK_ARTIVYA_NFTS.length > 0)
+  const [alluriaTroves, setAlluriaTroves] = useState<AlluriaTrove[]>([])
+  const [alluriaStability, setAlluriaStability] = useState<AlluriaStabilityPosition | null>(null)
   const [activeSection, setActiveSection] = useState<string>('holdings')
   const [discoveredTokens, setDiscoveredTokens] = useState<Array<{
     address: string; symbol: string; name: string; decimals: number; logo: string | null; balance: string;
@@ -153,6 +227,8 @@ export function Portfolio() {
     } catch { return new Set() }
   })
   const [showTokenSettings, setShowTokenSettings] = useState(false)
+  // Cached LP pair addresses — once loaded, never clears (prevents flash of inflated totals)
+  const [lpPairAddressCache, setLpPairAddressCache] = useState<Set<string>>(new Set())
 
   const toggleTokenVisibility = (key: string) => {
     setHiddenTokens(prev => {
@@ -208,11 +284,61 @@ export function Portfolio() {
     return () => clearInterval(interval)
   }, [address])
 
-  // Fetch token prices via Uniswap V3 QuoterV2 + Eloqura DEX fallback
+  // Fetch Alluria lending positions & stability pool from AluriaLens
+  useEffect(() => {
+    const fetchAlluria = async () => {
+      if (!publicClient || !address) {
+        setAlluriaTroves([])
+        setAlluriaStability(null)
+        return
+      }
+      try {
+        const [trovesResult, stabilityResult] = await Promise.allSettled([
+          publicClient.readContract({
+            address: ALLURIA_LENS,
+            abi: ALLURIA_LENS_ABI,
+            functionName: 'getAllUserTroves',
+            args: [address],
+          }),
+          publicClient.readContract({
+            address: ALLURIA_LENS,
+            abi: ALLURIA_LENS_ABI,
+            functionName: 'getUserStabilityPoolPosition',
+            args: [address],
+          }),
+        ])
+        if (trovesResult.status === 'fulfilled') {
+          setAlluriaTroves(trovesResult.value as unknown as AlluriaTrove[])
+        }
+        if (stabilityResult.status === 'fulfilled') {
+          const sp = stabilityResult.value as unknown as AlluriaStabilityPosition
+          if (sp.deposit > 0n || sp.pendingOEC > 0n) {
+            setAlluriaStability(sp)
+          }
+        }
+      } catch (err) {
+        console.error('Alluria fetch failed:', err)
+      }
+    }
+    fetchAlluria()
+    const interval = setInterval(fetchAlluria, 60000)
+    return () => clearInterval(interval)
+  }, [publicClient, address])
+
+  // Fetch token prices via Uniswap V3 QuoterV2 + Eloqura DEX fallback (parallel)
   useEffect(() => {
     const fetchPrices = async () => {
       if (!publicClient) return
       const prices: Record<string, number> = {}
+
+      // Helper: race a simulateContract call against a 4s timeout
+      const quoterCallWithTimeout = async (args: any, timeoutMs = 4000) => {
+        const call = publicClient.simulateContract(args)
+        const timeout = new Promise<never>((_, reject) =>
+          setTimeout(() => reject(new Error('timeout')), timeoutMs)
+        )
+        return Promise.race([call, timeout])
+      }
 
       // Merge discovered tokens + baseline pricing tokens (deduplicated)
       const seen = new Set<string>()
@@ -222,73 +348,110 @@ export function Portfolio() {
       seen.add('0x0000000000000000000000000000000000000000')
       for (const t of discoveredTokens) {
         const addr = t.address.toLowerCase()
+        // Skip LP tokens — they're pair contracts, not tradeable tokens
+        if (t.symbol.includes('LP') || t.symbol.includes('ELQ-')) continue
         if (!seen.has(addr)) { pricingTokens.push({ symbol: t.symbol, address: addr, decimals: t.decimals }); seen.add(addr) }
       }
       for (const t of PRICING_TOKENS) {
         const addr = t.address.toLowerCase()
         if (!seen.has(addr)) { pricingTokens.push({ symbol: t.symbol, address: addr, decimals: t.decimals }); seen.add(addr) }
       }
+      // Add TOKEN_MAP entries not yet seen (ALUR, ALUD, ELOQ)
+      for (const [addr, meta] of Object.entries(TOKEN_MAP)) {
+        if (!seen.has(addr)) { pricingTokens.push({ symbol: meta.symbol, address: addr, decimals: meta.decimals }); seen.add(addr) }
+      }
 
-      for (const token of pricingTokens) {
-        // USDC = $1
-        if (token.symbol === 'USDC') { prices['USDC'] = 1; prices[token.address.toLowerCase()] = 1; continue }
+      // Helper: fetch price for a single token
+      const fetchSinglePrice = async (token: typeof pricingTokens[0]): Promise<{ symbol: string; addr: string; price: number }> => {
+        const addr = token.address.toLowerCase()
+        if (token.symbol === 'USDC') return { symbol: 'USDC', addr, price: 1 }
+        if (token.symbol === 'ALUD') return { symbol: 'ALUD', addr, price: 1 } // stablecoin pegged to $1
 
-        // Use Uniswap WETH address for ETH/WETH when querying quoter
+        // Skip Uniswap quoter for Oeconomia-native tokens
+        if (SKIP_QUOTER.has(addr)) return { symbol: token.symbol, addr, price: 0 }
+
         const quoterAddress = (token.symbol === 'ETH' || token.symbol === 'WETH')
           ? UNISWAP_WETH : token.address as `0x${string}`
 
-        let priceFound = false
-
-        // Tier 1: Direct token → USDC via Uniswap V3
-        for (const fee of FEE_TIERS) {
-          try {
-            const result = await publicClient.simulateContract({
+        // Tier 1: Direct token → USDC via Uniswap V3 (all fee tiers parallel)
+        const directResults = await Promise.allSettled(
+          FEE_TIERS.map(fee =>
+            quoterCallWithTimeout({
               address: UNISWAP_QUOTER_V2,
               abi: QUOTER_ABI,
               functionName: 'quoteExactInputSingle',
               args: [{ tokenIn: quoterAddress, tokenOut: USDC_ADDRESS, amountIn: parseUnits('1', token.decimals), fee, sqrtPriceLimitX96: 0n }],
             })
-            const usdPrice = parseFloat(formatUnits(result.result[0], 6))
-            if (usdPrice > 0) { prices[token.symbol] = usdPrice; prices[token.address.toLowerCase()] = usdPrice; priceFound = true; break }
-          } catch { continue }
+          )
+        )
+        for (const r of directResults) {
+          if (r.status === 'fulfilled') {
+            const usdPrice = parseFloat(formatUnits(r.value.result[0], 6))
+            if (usdPrice > 0) return { symbol: token.symbol, addr, price: usdPrice }
+          }
         }
 
-        // Tier 2: token → WETH → USDC via Uniswap V3
-        if (!priceFound && token.symbol !== 'WETH' && token.symbol !== 'ETH') {
-          for (const fee of FEE_TIERS) {
-            try {
-              const result = await publicClient.simulateContract({
+        // Tier 2: token → WETH → USDC (parallel fee tiers)
+        if (token.symbol !== 'WETH' && token.symbol !== 'ETH') {
+          const hopResults = await Promise.allSettled(
+            FEE_TIERS.map(fee =>
+              quoterCallWithTimeout({
                 address: UNISWAP_QUOTER_V2,
                 abi: QUOTER_ABI,
                 functionName: 'quoteExactInputSingle',
                 args: [{ tokenIn: quoterAddress, tokenOut: UNISWAP_WETH, amountIn: parseUnits('1', token.decimals), fee, sqrtPriceLimitX96: 0n }],
               })
-              const wethAmount = parseFloat(formatUnits(result.result[0], 18))
-              if (wethAmount > 0 && prices['ETH']) {
-                prices[token.symbol] = wethAmount * prices['ETH']; prices[token.address.toLowerCase()] = wethAmount * prices['ETH']; priceFound = true; break
-              } else if (wethAmount > 0) {
-                for (const wethFee of FEE_TIERS) {
-                  try {
-                    const wethResult = await publicClient.simulateContract({
+            )
+          )
+          for (const r of hopResults) {
+            if (r.status === 'fulfilled') {
+              const wethAmount = parseFloat(formatUnits(r.value.result[0], 18))
+              if (wethAmount > 0) {
+                const wethResults = await Promise.allSettled(
+                  FEE_TIERS.map(wethFee =>
+                    quoterCallWithTimeout({
                       address: UNISWAP_QUOTER_V2,
                       abi: QUOTER_ABI,
                       functionName: 'quoteExactInputSingle',
                       args: [{ tokenIn: UNISWAP_WETH, tokenOut: USDC_ADDRESS, amountIn: parseUnits('1', 18), fee: wethFee, sqrtPriceLimitX96: 0n }],
                     })
-                    const wethUsd = parseFloat(formatUnits(wethResult.result[0], 6))
-                    if (wethUsd > 0) { prices[token.symbol] = wethAmount * wethUsd; prices[token.address.toLowerCase()] = wethAmount * wethUsd; priceFound = true; break }
-                  } catch { continue }
+                  )
+                )
+                for (const wr of wethResults) {
+                  if (wr.status === 'fulfilled') {
+                    const wethUsd = parseFloat(formatUnits(wr.value.result[0], 6))
+                    if (wethUsd > 0) return { symbol: token.symbol, addr, price: wethAmount * wethUsd }
+                  }
                 }
-                if (priceFound) break
               }
-            } catch { continue }
+            }
           }
         }
 
-        // Tier 3: Eloqura DEX pool reserves (for OEC and Eloqura-only tokens)
-        if (!priceFound) {
-          try {
-            const pairAddress = await publicClient.readContract({
+        return { symbol: token.symbol, addr, price: 0 }
+      }
+
+      // Fetch all Uniswap prices in parallel
+      const results = await Promise.all(pricingTokens.map(fetchSinglePrice))
+      for (const { symbol, addr, price } of results) {
+        if (price > 0) { prices[symbol] = price; prices[addr] = price }
+      }
+
+      // Sync ETH <-> WETH
+      if (prices['ETH'] && !prices['WETH']) prices['WETH'] = prices['ETH']
+      if (prices['WETH'] && !prices['ETH']) prices['ETH'] = prices['WETH']
+      const ethPrice = prices['ETH'] || 0
+      prices['eth'] = ethPrice
+      prices['0xfff9976782d46cc05630d1f6ebab18b2324d6b14'] = ethPrice
+      prices['0x34b11f6b8f78fa010bbca71bc7fe79daa811b89f'] = ethPrice
+
+      // Tier 3: Eloqura DEX pool reserves for unpriced tokens (parallel)
+      const unpricedTokens = pricingTokens.filter(t => !prices[t.address.toLowerCase()] && t.symbol !== 'ETH')
+      if (unpricedTokens.length > 0) {
+        const eloquraResults = await Promise.allSettled(
+          unpricedTokens.map(async (token) => {
+            // Try USDC pair first
+            let pairAddress = await publicClient.readContract({
               address: ELOQURA_FACTORY,
               abi: FACTORY_ABI,
               functionName: 'getPair',
@@ -303,21 +466,44 @@ export function Portfolio() {
               const isToken0 = token0.toLowerCase() === token.address.toLowerCase()
               const tokenReserve = parseFloat(formatUnits(isToken0 ? reserves[0] : reserves[1], token.decimals))
               const usdcReserve = parseFloat(formatUnits(isToken0 ? reserves[1] : reserves[0], 6))
-              if (tokenReserve > 0) { const p = usdcReserve / tokenReserve; prices[token.symbol] = p; prices[token.address.toLowerCase()] = p; priceFound = true }
+              if (tokenReserve > 0 && usdcReserve > 0) {
+                return { symbol: token.symbol, addr: token.address.toLowerCase(), price: usdcReserve / tokenReserve }
+              }
             }
-          } catch {}
+
+            // Try WETH pair as fallback
+            if (ethPrice > 0) {
+              pairAddress = await publicClient.readContract({
+                address: ELOQURA_FACTORY,
+                abi: FACTORY_ABI,
+                functionName: 'getPair',
+                args: [token.address as `0x${string}`, ELOQURA_WETH],
+              }) as `0x${string}`
+
+              if (pairAddress && pairAddress !== '0x0000000000000000000000000000000000000000') {
+                const [reserves, token0] = await Promise.all([
+                  publicClient.readContract({ address: pairAddress, abi: PAIR_ABI, functionName: 'getReserves' }) as Promise<[bigint, bigint, number]>,
+                  publicClient.readContract({ address: pairAddress, abi: PAIR_ABI, functionName: 'token0' }) as Promise<`0x${string}`>,
+                ])
+                const isToken0 = token0.toLowerCase() === token.address.toLowerCase()
+                const tokenReserve = parseFloat(formatUnits(isToken0 ? reserves[0] : reserves[1], token.decimals))
+                const wethReserve = parseFloat(formatUnits(isToken0 ? reserves[1] : reserves[0], 18))
+                if (tokenReserve > 0 && wethReserve > 0) {
+                  return { symbol: token.symbol, addr: token.address.toLowerCase(), price: (wethReserve / tokenReserve) * ethPrice }
+                }
+              }
+            }
+
+            return null
+          })
+        )
+        for (const r of eloquraResults) {
+          if (r.status === 'fulfilled' && r.value) {
+            prices[r.value.symbol] = r.value.price
+            prices[r.value.addr] = r.value.price
+          }
         }
-
-        // ETH and WETH share price
-        if (token.symbol === 'ETH' && prices['ETH'] && !prices['WETH']) prices['WETH'] = prices['ETH']
-        if (token.symbol === 'WETH' && prices['WETH'] && !prices['ETH']) prices['ETH'] = prices['WETH']
       }
-
-      // Ensure WETH addresses and ETH alias are mapped
-      const ethPrice = prices['ETH'] || 0
-      prices['eth'] = ethPrice
-      prices['0xfff9976782d46cc05630d1f6ebab18b2324d6b14'] = ethPrice
-      prices['0x34b11f6b8f78fa010bbca71bc7fe79daa811b89f'] = ethPrice
 
       setTokenPrices(prices)
     }
@@ -440,6 +626,13 @@ export function Portfolio() {
       .map(r => r.result as `0x${string}`)
   }, [pairAddressResults])
 
+  // Update cached LP pair addresses when loaded (only set, never clear)
+  useEffect(() => {
+    if (pairAddresses.length > 0) {
+      setLpPairAddressCache(new Set(pairAddresses.map(a => a.toLowerCase())))
+    }
+  }, [pairAddresses])
+
   // ── ELOQURA LP: Phase 3 — get pair details (token0, token1, reserves, totalSupply, user balance) ──
   const pairDetailCalls = useMemo(() => {
     if (!address || pairAddresses.length === 0) return []
@@ -536,16 +729,26 @@ export function Portfolio() {
   const isLpExpanded = lpExpanded ?? false
 
   // Section totals
-  const visibleTokens = discoveredTokens.filter(t => !hiddenTokens.has(t.address.toLowerCase()))
+  const visibleTokens = discoveredTokens.filter(t => {
+    const addr = t.address.toLowerCase()
+    if (hiddenTokens.has(addr)) return false
+    if (lpPairAddressCache.has(addr)) return false
+    if (t.symbol.includes('LP') || t.symbol.includes('ELQ-')) return false
+    return true
+  })
   const tokensWithBalance = visibleTokens.length + (ethBalance && !hiddenTokens.has('eth') && parseFloat(ethBalance.formatted || '0') > 0 ? 1 : 0)
   const totalStakedDisplay = stakingPositions.reduce((sum, p) => sum + parseFloat(formatUnits(p.userStaked, p.stakingDecimals)), 0)
   const totalPendingDisplay = stakingPositions.reduce((sum, p) => sum + parseFloat(formatUnits(p.pendingRewards, p.rewardsDecimals)), 0)
 
   // USD value computations (include ALL tokens in portfolio total regardless of visibility)
+  // Exclude LP token addresses — their value is already counted in lpUsdTotal
   const ethUsdValue = ethBalance ? parseFloat(ethBalance.formatted || '0') * getPrice('ETH') : 0
   const holdingsUsdTotal = ethUsdValue + discoveredTokens.reduce((sum, t) => {
+    const addr = t.address.toLowerCase()
+    if (lpPairAddressCache.has(addr)) return sum // skip LP tokens by address
+    if (t.symbol.includes('LP') || t.symbol.includes('ELQ-')) return sum // skip LP tokens by symbol
     const balance = parseFloat(formatUnits(BigInt(t.balance), t.decimals))
-    return sum + balance * getPrice(t.address.toLowerCase())
+    return sum + balance * getPrice(addr)
   }, 0)
 
   const stakingUsdTotal = stakingPositions.reduce((sum, p) => {
@@ -558,14 +761,24 @@ export function Portfolio() {
     if (lp.totalSupply === 0n) return sum
     const userToken0 = (lp.reserve0 * lp.userLpBalance) / lp.totalSupply
     const userToken1 = (lp.reserve1 * lp.userLpBalance) / lp.totalSupply
-    const val0 = parseFloat(formatUnits(userToken0, lp.token0Decimals)) * getPrice(lp.token0Symbol)
-    const val1 = parseFloat(formatUnits(userToken1, lp.token1Decimals)) * getPrice(lp.token1Symbol)
+    // Use address-based pricing (more reliable), fall back to symbol
+    const price0 = getPrice(lp.token0.toLowerCase()) || getPrice(lp.token0Symbol)
+    const price1 = getPrice(lp.token1.toLowerCase()) || getPrice(lp.token1Symbol)
+    let val0 = parseFloat(formatUnits(userToken0, lp.token0Decimals)) * price0
+    let val1 = parseFloat(formatUnits(userToken1, lp.token1Decimals)) * price1
+    // V2 AMM mirror: both sides are equal USD value
+    if (val0 > 0 && val1 === 0) val1 = val0
+    else if (val1 > 0 && val0 === 0) val0 = val1
     return sum + val0 + val1
   }, 0)
 
-  // Alluria & Artivya mock data totals
-  const alluriaPositionCount = MOCK_ALLURIA_POSITIONS.length
-  const alluriaNetValue = MOCK_ALLURIA_POSITIONS.reduce((sum, p) => sum + (p.collateralValue - p.borrowed), 0)
+  // Alluria real data totals
+  const alluriaPositionCount = alluriaTroves.length + (alluriaStability ? 1 : 0)
+  const alluriaNetValue = alluriaTroves.reduce((sum, t) => {
+    const collateralVal = parseFloat(formatUnits(t.collateralValueUSD, 18))
+    const debt = parseFloat(formatUnits(t.debt, 18))
+    return sum + (collateralVal - debt)
+  }, 0) + (alluriaStability ? parseFloat(formatUnits(alluriaStability.deposit, 18)) : 0)
   const artivyaNFTCount = MOCK_ARTIVYA_NFTS.length
   const artivyaTotalOec = MOCK_ARTIVYA_NFTS.reduce((sum, n) => sum + n.price, 0)
   const artivyaUsdTotal = artivyaTotalOec * getPrice(OEC_ADDRESS)
@@ -601,9 +814,9 @@ export function Portfolio() {
       <Layout>
         <div className="p-4 md:p-5" style={{ background: 'linear-gradient(180deg, #080c12 0%, #0a0e15 50%, #090d13 100%)' }}>
           <div className="max-w-7xl mx-auto">
-            <div className="text-center py-16">
-              <Wallet className="w-16 h-16 text-cyan-400 mx-auto mb-6" />
-              <p className="text-gray-400 mb-8">Connect your wallet to view your token portfolio</p>
+            <div className="flex flex-col items-center justify-center py-16">
+              <Wallet className="w-16 h-16 text-cyan-400 mb-6" />
+              <p className="text-gray-400 mb-8 text-center">Connect your wallet to view your token portfolio</p>
               <div className="max-w-xs mx-auto">
                 <WalletConnect />
                 <WalletSetupGuide />
@@ -1143,8 +1356,13 @@ export function Portfolio() {
                               : 'No position'}
                           </div>
                           {(() => {
-                            const lpVal = parseFloat(formatUnits(userToken0, lp.token0Decimals)) * getPrice(lp.token0Symbol)
-                              + parseFloat(formatUnits(userToken1, lp.token1Decimals)) * getPrice(lp.token1Symbol)
+                            const p0 = getPrice(lp.token0.toLowerCase()) || getPrice(lp.token0Symbol)
+                            const p1 = getPrice(lp.token1.toLowerCase()) || getPrice(lp.token1Symbol)
+                            let v0 = parseFloat(formatUnits(userToken0, lp.token0Decimals)) * p0
+                            let v1 = parseFloat(formatUnits(userToken1, lp.token1Decimals)) * p1
+                            if (v0 > 0 && v1 === 0) v1 = v0
+                            else if (v1 > 0 && v0 === 0) v0 = v1
+                            const lpVal = v0 + v1
                             return lpVal > 0
                               ? <div className="text-xs text-cyan-400">{formatPrice(lpVal)}</div>
                               : <div className="text-xs text-gray-400">{userShare > 0 ? `${userShare.toFixed(2)}% share` : '---'}</div>
@@ -1228,62 +1446,111 @@ export function Portfolio() {
           {alluriaExpanded && (
             <div className="space-y-3">
               <div className="flex items-center justify-between py-2 px-3 bg-gray-800/30 rounded-lg border border-gray-700/30">
-                <span className="text-xs text-gray-400">{alluriaPositionCount} lending position{alluriaPositionCount !== 1 ? 's' : ''}</span>
+                <span className="text-xs text-gray-400">{alluriaTroves.length} trove{alluriaTroves.length !== 1 ? 's' : ''}{alluriaStability ? ' · 1 stability pool deposit' : ''}</span>
               </div>
               {alluriaPositionCount === 0 ? (
                 <div className="text-center py-6">
                   <Gem className="w-10 h-10 text-gray-600 mx-auto mb-3" />
                   <p className="text-gray-400 text-sm">No Alluria positions or stakes</p>
-                  <p className="text-xs text-gray-500 mt-1">Stake or participate in Alluria to see your positions here</p>
+                  <p className="text-xs text-gray-500 mt-1">Open a trove or deposit to the Stability Pool on Alluria</p>
                 </div>
               ) : (
-                MOCK_ALLURIA_POSITIONS.map((pos) => {
-                  const netValue = pos.collateralValue - pos.borrowed
-                  const ratioColor = pos.ratio < 120 ? 'text-red-400' : pos.ratio < 150 ? 'text-yellow-400' : 'text-green-400'
-                  return (
-                    <Card key={pos.id} className="p-4 border border-amber-500/30 bg-gradient-to-r from-amber-500/5 to-orange-500/5 hover:from-amber-500/10 hover:to-orange-500/10 transition-all duration-200">
+                <>
+                  {alluriaTroves.map((trove, idx) => {
+                    const colAddr = trove.collateral.toLowerCase()
+                    const meta = ALLURIA_COLLATERAL_META[colAddr] || { symbol: '???', decimals: 18, logo: '' }
+                    const colAmount = parseFloat(formatUnits(trove.collateralAmount, meta.decimals))
+                    const colValueUsd = parseFloat(formatUnits(trove.collateralValueUSD, 18))
+                    const debt = parseFloat(formatUnits(trove.debt, 18))
+                    const ratio = Number(trove.collateralRatio) / 100
+                    const liqPrice = parseFloat(formatUnits(trove.liquidationPrice, 18))
+                    const netValue = colValueUsd - debt
+                    const ratioColor = ratio < 120 ? 'text-red-400' : ratio < 150 ? 'text-yellow-400' : 'text-green-400'
+                    return (
+                      <Card key={idx} className="p-4 border border-amber-500/30 bg-gradient-to-r from-amber-500/5 to-orange-500/5 hover:from-amber-500/10 hover:to-orange-500/10 transition-all duration-200">
+                        <div className="flex items-center justify-between mb-3">
+                          <div className="flex items-center space-x-3">
+                            <div className="w-9 h-9 rounded-full overflow-hidden flex-shrink-0">
+                              {meta.logo ? <img src={meta.logo} alt={meta.symbol} className="w-full h-full object-cover" /> : (
+                                <div className="w-full h-full bg-gradient-to-r from-amber-500 to-orange-500 flex items-center justify-center"><Shield className="w-4 h-4 text-white" /></div>
+                              )}
+                            </div>
+                            <div>
+                              <div className="flex items-center space-x-2">
+                                <span className="font-medium">{meta.symbol} Trove</span>
+                              </div>
+                              <div className="text-xs text-gray-400">
+                                Collateral → Borrow ALUD
+                              </div>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <div className="font-medium">{formatPrice(netValue)}</div>
+                            <div className="text-xs text-cyan-400">Net value</div>
+                          </div>
+                        </div>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 pt-3 border-t border-gray-700/50">
+                          <div>
+                            <div className="text-xs text-gray-400 mb-1">Collateral</div>
+                            <div className="text-sm">{formatCompact(colAmount)} {meta.symbol}</div>
+                            <div className="text-xs text-gray-500">{formatPrice(colValueUsd)}</div>
+                          </div>
+                          <div>
+                            <div className="text-xs text-gray-400 mb-1">Borrowed</div>
+                            <div className="text-sm">{formatCompact(debt)} ALUD</div>
+                          </div>
+                          <div>
+                            <div className="text-xs text-gray-400 mb-1">Ratio</div>
+                            <div className={`text-sm font-medium ${ratioColor}`}>{ratio.toFixed(1)}%</div>
+                          </div>
+                          <div>
+                            <div className="text-xs text-gray-400 mb-1">Liq. Price</div>
+                            <div className="text-sm">{formatPrice(liqPrice)}</div>
+                          </div>
+                        </div>
+                      </Card>
+                    )
+                  })}
+                  {alluriaStability && (
+                    <Card className="p-4 border border-cyan-500/30 bg-gradient-to-r from-cyan-500/5 to-blue-500/5 hover:from-cyan-500/10 hover:to-blue-500/10 transition-all duration-200">
                       <div className="flex items-center justify-between mb-3">
                         <div className="flex items-center space-x-3">
-                          <div className="w-9 h-9 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 flex items-center justify-center">
+                          <div className="w-9 h-9 rounded-full bg-gradient-to-r from-cyan-500 to-blue-500 flex items-center justify-center">
                             <Shield className="w-4 h-4 text-white" />
                           </div>
                           <div>
-                            <div className="flex items-center space-x-2">
-                              <span className="font-medium">{pos.collateral} Lending</span>
-                              <span className="text-xs px-2 py-0.5 rounded bg-amber-500/20 text-amber-400">CDP #{pos.id}</span>
-                            </div>
-                            <div className="text-xs text-gray-400">
-                              Collateral → Borrow ALUD
-                            </div>
+                            <span className="font-medium">Stability Pool</span>
+                            <div className="text-xs text-gray-400">ALUD deposit → earn liquidation gains + OEC</div>
                           </div>
                         </div>
                         <div className="text-right">
-                          <div className="font-medium">{formatPrice(netValue)}</div>
-                          <div className="text-xs text-cyan-400">Net value</div>
+                          <div className="font-medium">{formatPrice(parseFloat(formatUnits(alluriaStability.deposit, 18)))}</div>
+                          <div className="text-xs text-cyan-400">Deposited</div>
                         </div>
                       </div>
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 pt-3 border-t border-gray-700/50">
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-3 pt-3 border-t border-gray-700/50">
                         <div>
-                          <div className="text-xs text-gray-400 mb-1">Collateral</div>
-                          <div className="text-sm">{pos.collateralAmount} {pos.collateral}</div>
-                          <div className="text-xs text-gray-500">{formatPrice(pos.collateralValue)}</div>
+                          <div className="text-xs text-gray-400 mb-1">ALUD Deposited</div>
+                          <div className="text-sm">{formatCompact(parseFloat(formatUnits(alluriaStability.deposit, 18)))} ALUD</div>
                         </div>
                         <div>
-                          <div className="text-xs text-gray-400 mb-1">Borrowed</div>
-                          <div className="text-sm">{formatCompact(pos.borrowed)} ALUD</div>
+                          <div className="text-xs text-gray-400 mb-1">Pending OEC</div>
+                          <div className="text-sm">{formatCompact(parseFloat(formatUnits(alluriaStability.pendingOEC, 18)))} OEC</div>
                         </div>
-                        <div>
-                          <div className="text-xs text-gray-400 mb-1">Ratio</div>
-                          <div className={`text-sm font-medium ${ratioColor}`}>{pos.ratio}%</div>
-                        </div>
-                        <div>
-                          <div className="text-xs text-gray-400 mb-1">Interest</div>
-                          <div className="text-sm">{pos.interestRate}% APR</div>
-                        </div>
+                        {alluriaStability.gainTokens.length > 0 && (
+                          <div>
+                            <div className="text-xs text-gray-400 mb-1">Collateral Gains</div>
+                            {alluriaStability.gainTokens.map((token, i) => {
+                              const gMeta = ALLURIA_COLLATERAL_META[token.toLowerCase()] || { symbol: '???', decimals: 18 }
+                              const amt = parseFloat(formatUnits(alluriaStability.gainAmounts[i], gMeta.decimals))
+                              return amt > 0 ? <div key={i} className="text-sm">{formatCompact(amt)} {gMeta.symbol}</div> : null
+                            })}
+                          </div>
+                        )}
                       </div>
                     </Card>
-                  )
-                })
+                  )}
+                </>
               )}
             </div>
           )}

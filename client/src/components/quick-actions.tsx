@@ -45,7 +45,7 @@ export function QuickActions({ contractAddress }: QuickActionsProps) {
               onClick={() => setShowTestnetModal(true)}
               className="bg-crypto-gold/10 hover:bg-crypto-gold/20 border-crypto-gold/30 rounded-lg p-4 h-auto flex-col space-y-2 group"
             >
-              <img src="https://pub-37d61a7eb7ae45898b46702664710cb2.r2.dev/images/OEC%20Logo.png" alt="OEC" className="w-8 h-8 rounded-full group-hover:scale-110 transition-transform" />
+              <img src="https://pub-37d61a7eb7ae45898b46702664710cb2.r2.dev/images/OEC%20Logo.png" alt="OEC" className="w-8 h-8 rounded-full object-cover group-hover:scale-110 transition-transform" style={{ minWidth: '2rem' }} />
               <div className="text-center">
                 <div className="font-medium">Testnet Version</div>
                 <div className="text-sm text-gray-400">Test deployment info</div>

@@ -12,7 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 const aludLogo = "https://pub-37d61a7eb7ae45898b46702664710cb2.r2.dev/ALUD.png";
 
 // ALUR logo from hosted URL
-const alurLogo = "https://pub-37d61a7eb7ae45898b46702664710cb2.r2.dev/ALUR.png";
+const alurLogo = "https://pub-37d61a7eb7ae45898b46702664710cb2.r2.dev/With%20Border/ALUR%20no%20Border.png";
 
 import { 
   DollarSign, 

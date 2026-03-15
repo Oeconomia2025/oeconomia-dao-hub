@@ -12,8 +12,8 @@ interface TestnetModalProps {
 export function TestnetModal({ isOpen, onClose }: TestnetModalProps) {
   const { copyToClipboard } = useCopyToClipboard();
   
-  const testnetContract = "0x2b2fb8df4ac5d394f0d5674d7a54802e42a06aba";
-  const testnetBSCScanUrl = `https://sepolia.etherscan.io/address/0x2b2fb8df4ac5d394f0d5674d7a54802e42a06aba`;
+  const testnetContract = "0x00904218319a045a96d776ec6a970f54741208e6";
+  const testnetBSCScanUrl = `https://sepolia.etherscan.io/address/0x00904218319a045a96d776ec6a970f54741208e6`;
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>

@@ -14,7 +14,8 @@ import {
   AlertTriangle,
   Heart,
   Vote,
-  Layers
+  Layers,
+  Flag
 } from "lucide-react";
 import { SiX, SiMedium, SiYoutube, SiDiscord, SiGithub, SiTelegram } from "react-icons/si";
 import { WalletConnect } from "@/components/wallet-connect";
@@ -43,6 +44,7 @@ export function Layout({ children }: LayoutProps) {
     }
     return false;
   });
+  const [presaleBannerDismissed, setPresaleBannerDismissed] = useState(false);
   const [disclaimerOpen, setDisclaimerOpen] = useState(false);
   const [supportOpen, setSupportOpen] = useState(false);
   const [copiedAddress, setCopiedAddress] = useState<string | null>(null);
@@ -85,6 +87,7 @@ export function Layout({ children }: LayoutProps) {
     { icon: TrendingUp, label: 'Analytics', path: '/analytics', active: location === '/analytics' },
     { icon: Wallet, label: 'Portfolio', path: '/portfolio', active: location === '/portfolio' },
     { icon: Layers, label: 'Ecosystem', path: '/ecosystem', active: location.startsWith('/ecosystem') },
+    { icon: Flag, label: 'Roadmap', path: '/roadmap', active: location === '/roadmap' },
   ];
 
   // Token price pills data
@@ -101,7 +104,7 @@ export function Layout({ children }: LayoutProps) {
     },
     {
       symbol: 'ALUR',
-      logo: '/ecosystem/alur.png',
+      logo: 'https://pub-37d61a7eb7ae45898b46702664710cb2.r2.dev/With%20Border/ALUR%20With%20Border.png',
       price: '$1.85',
     },
     {
@@ -231,7 +234,7 @@ export function Layout({ children }: LayoutProps) {
               style={!sidebarCollapsed ? { width: 'var(--radix-dropdown-menu-trigger-width)' } : undefined}
             >
               <DropdownMenuItem
-                onClick={() => window.open('https://oeconomia.tech/', '_blank')}
+                onClick={() => window.open('https://oeconomia.io/', '_blank')}
                 className="cursor-pointer hover:bg-gradient-to-r hover:from-cyan-500/20 hover:to-purple-600/20 transition-all duration-200"
               >
                 <Globe className="w-4 h-4 mr-2" />
@@ -301,6 +304,37 @@ export function Layout({ children }: LayoutProps) {
 
       {/* Main Content */}
       <div className="flex-1 lg:ml-0 mr-9 relative">
+        {/* Presale Banner */}
+        {!presaleBannerDismissed && (
+          <div
+            className="relative z-40 flex items-center justify-center gap-4 px-4 py-3 text-base text-white"
+            style={{ background: 'linear-gradient(90deg, #00d4ff, #a855f7, #ff00ff)' }}
+          >
+            <span className="font-bold text-2xl leading-none">
+              OEC Token Presale is Live!
+            </span>
+            <button
+              onClick={() => navigate('/presale')}
+              className="bg-white hover:bg-gray-100 text-gray-900 px-5 py-1.5 rounded-full text-sm font-bold transition-colors"
+              style={{
+                border: '2px solid transparent',
+                backgroundImage: 'linear-gradient(white, white), linear-gradient(135deg, #ff0000, #ff8800, #ffff00, #00ff00, #00ffff, #0088ff, #8800ff, #ff00ff, #ff0000)',
+                backgroundOrigin: 'border-box',
+                backgroundClip: 'padding-box, border-box',
+              }}
+            >
+              Join Now
+            </button>
+            <button
+              onClick={() => setPresaleBannerDismissed(true)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-white/70 hover:text-white transition-colors"
+              title="Dismiss"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        )}
+
         {/* Top Bar with Price Pills */}
         <header className="sticky top-0 z-30 bg-gray-950/90 backdrop-blur-sm border-b border-gray-700 h-14 flex items-center px-4 md:px-5">
           <div className="flex items-center justify-between w-full max-w-7xl mx-auto">

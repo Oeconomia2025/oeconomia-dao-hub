@@ -77,7 +77,7 @@ const protocols = [
     accentColor2: "#14b8a6",
     borderColor: "#c08050",
     pillColor: "#c08050",
-    logo: "/ecosystem/alur.png",
+    logo: "https://pub-37d61a7eb7ae45898b46702664710cb2.r2.dev/With%20Border/ALUR%20no%20Border.png",
     url: "https://alluria.oeconomia.io",
     tvl: "$3,800,000",
     users: "2,156",
@@ -119,6 +119,24 @@ const protocols = [
     users: "982",
     apy: "22.4%",
     volume24h: "$210,000",
+  },
+  {
+    slug: "governance",
+    name: "OEC Governance",
+    description: "Community-driven governance for the Oeconomia protocol. Submit proposals, vote on upgrades, and shape the future of the ecosystem.",
+    category: "Governance",
+    gradient: "from-amber-500 to-yellow-500",
+    gradientCSS: "linear-gradient(135deg, #f59e0b, #eab308)",
+    accentColor: "#f59e0b",
+    accentColor2: "#eab308",
+    borderColor: "linear-gradient(90deg, #f59e0b, #eab308)",
+    pillColor: "#f59e0b",
+    logo: "/ecosystem/governance.png",
+    url: "/governance",
+    tvl: "—",
+    users: "4,128",
+    apy: "—",
+    volume24h: "—",
   },
 ];
 
@@ -421,7 +439,7 @@ export default function Ecosystem() {
               <ProtocolCard
                 key={protocol.slug}
                 protocol={protocol}
-                onClick={() => navigate(`/ecosystem/${protocol.slug}`)}
+                onClick={() => navigate(protocol.slug === "governance" ? "/governance" : `/ecosystem/${protocol.slug}`)}
               />
             ))}
           </div>

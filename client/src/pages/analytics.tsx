@@ -888,7 +888,7 @@ export default function Analytics() {
                       <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
                       <XAxis dataKey="date" stroke="#6b7280" fontSize={10} tickLine={false} />
                       <YAxis stroke="#6b7280" fontSize={10} tickLine={false} tickFormatter={(v) => `$${v}M`} />
-                      <Tooltip contentStyle={chartTooltipStyle} formatter={(value: number) => [`$${value.toFixed(2)}M`]} />
+                      <Tooltip contentStyle={chartTooltipStyle} formatter={(value: number) => [`$${value.toFixed(2)}M`]} itemSorter={(item) => { const order: Record<string, number> = { NFT: 0, Lending: 1, Bridge: 2, DEX: 3, Staking: 4 }; return order[item.dataKey as string] ?? 5; }} />
                       <Area type="monotone" dataKey="Staking" stackId="1" stroke="#06b6d4" fill="url(#gradStaking)" strokeWidth={1.5} />
                       <Area type="monotone" dataKey="DEX" stackId="1" stroke="#8b5cf6" fill="url(#gradDEX)" strokeWidth={1.5} />
                       <Area type="monotone" dataKey="Bridge" stackId="1" stroke="#f59e0b" fill="url(#gradBridge)" strokeWidth={1.5} />
