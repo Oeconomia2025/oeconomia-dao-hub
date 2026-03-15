@@ -141,8 +141,10 @@ export function Layout({ children }: LayoutProps) {
               <img src="/oec-logo.png" alt="Oeconomia Logo" className="w-full h-full object-cover" />
             </div>
             {!sidebarCollapsed && (
-              <div>
+              <div className="leading-none">
                 <h2 className="text-lg font-bold whitespace-nowrap">Oeconomia</h2>
+                <div className="border-b border-white mt-[2px] mb-[2px]" />
+                <p className="text-[9px] font-semibold text-white uppercase flex justify-between">{'PANTHEON'.split('').map((c, i) => <span key={i}>{c}</span>)}</p>
               </div>
             )}
           </div>
