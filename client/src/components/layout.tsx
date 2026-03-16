@@ -313,7 +313,7 @@ export function Layout({ children }: LayoutProps) {
             style={{ background: 'linear-gradient(90deg, #00d4ff, #a855f7, #ff00ff)' }}
           >
             <span className="font-bold text-2xl leading-none">
-              OEC Token Presale is Live!
+              OEC Token Presale Coming Soon!
             </span>
             <button
               onClick={() => navigate('/presale')}

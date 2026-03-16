@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
 import { useLocation } from "wouter";
+import { PresaleFAQSchema } from "@/components/structured-data";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -25,6 +26,7 @@ import {
   Landmark,
   ExternalLink,
   ChevronRight,
+  ChevronDown,
   ArrowLeft,
 } from "lucide-react";
 import { SiX, SiDiscord, SiMedium, SiGithub, SiTelegram } from "react-icons/si";
@@ -49,6 +51,14 @@ import { EcosystemCube } from "@/components/ecosystem-cube";
 // ============================================================
 type TxStatus = "idle" | "pending" | "success" | "error";
 
+const PAYMENT_TOKENS = [
+  { symbol: "USDC", name: "USD Coin", logo: "/usdc-logo.png" },
+  { symbol: "USDT", name: "Tether", logo: "/usdt-logo.png" },
+  { symbol: "DAI", name: "Dai", logo: "/dai-logo.png" },
+  { symbol: "ETH", name: "Ethereum", logo: "/eth-logo.png" },
+  { symbol: "WETH", name: "Wrapped ETH", logo: "/weth-logo.png" },
+] as const;
+
 // ============================================================
 // Countdown display helper
 // ============================================================
@@ -71,6 +81,8 @@ export default function Presale() {
   const [usdcInput, setUsdcInput] = useState("");
   const [txStatus, setTxStatus] = useState<TxStatus>("idle");
   const [txError, setTxError] = useState("");
+  const [selectedToken, setSelectedToken] = useState(PAYMENT_TOKENS[0]);
+  const [tokenDropdownOpen, setTokenDropdownOpen] = useState(false);
 
   // Derived
   const usdcAmount = parseFloat(usdcInput) || 0;
@@ -86,10 +98,10 @@ export default function Presale() {
     if (presale.tokensSold >= presale.hardCap) return { label: "SOLD OUT", color: "bg-red-500/20 text-red-400 border-red-500/30" };
     if (!presale.isPresaleActive) return { label: "PRESALE ENDED", color: "bg-gray-500/20 text-gray-400 border-gray-500/30" };
     if (presale.timeRemaining <= 0 && presale.presaleEndTime > 0) return { label: "PRESALE ENDED", color: "bg-gray-500/20 text-gray-400 border-gray-500/30" };
-    return { label: "PRESALE IS LIVE", color: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30" };
+    return { label: "PRESALE COMING SOON", color: "bg-cyan-500/20 text-cyan-400 border-cyan-500/30" };
   }, [presale.isPresaleActive, presale.timeRemaining, presale.tokensSold, presale.hardCap, presale.presaleEndTime]);
 
-  const isLive = statusBadge.label === "PRESALE IS LIVE";
+  const isLive = statusBadge.label === "PRESALE COMING SOON";
 
   // --------------------------------------------------------
   // Transaction handlers
@@ -155,6 +167,7 @@ export default function Presale() {
       className="min-h-screen text-white relative"
       style={{ background: "#000000" }}
     >
+      <PresaleFAQSchema />
       {/* Full-screen 3D cube background */}
       <EcosystemCube className="fixed inset-0 w-full h-full z-0" />
 
@@ -232,7 +245,7 @@ export default function Presale() {
           {/* PRESALE WIDGET                 */}
           {/* ============================== */}
           <section className="mt-4">
-            <Card className="bg-gray-900/20 border-gray-700/50 overflow-hidden backdrop-blur-xl">
+            <Card className="bg-gray-900/20 border-gray-700/50 backdrop-blur-xl relative overflow-hidden">
               {/* Gradient top bar */}
               <div className="h-1 w-full" style={{ background: "linear-gradient(90deg, #00d4ff, #ff00ff)" }} />
 
@@ -300,17 +313,23 @@ export default function Presale() {
                   <div className="relative">
                     <Input
                       type="number"
-                      placeholder="Enter USDC amount"
+                      placeholder={`Enter ${selectedToken.symbol} amount`}
                       value={usdcInput}
                       onChange={(e) => setUsdcInput(e.target.value)}
                       min="0"
                       step="any"
-                      className="bg-gray-800 border-gray-700 text-white pr-16 h-12 text-lg"
+                      className="bg-gray-800 border-gray-700 text-white pr-32 h-12 !text-2xl !md:text-2xl py-1 focus:ring-0 focus:ring-offset-0 focus:border-gray-700 focus-visible:ring-0 focus-visible:ring-offset-0"
                       disabled={!isLive || txStatus === "pending"}
                     />
-                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-500 font-medium">
-                      USDC
-                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setTokenDropdownOpen(true)}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1.5 px-2 py-1 rounded-md bg-gray-700/80 hover:bg-gray-600/80 transition-colors"
+                    >
+                      <img src={selectedToken.logo} alt={selectedToken.symbol} className="w-5 h-5 rounded-full object-cover" />
+                      <span className="text-sm font-semibold text-white">{selectedToken.symbol}</span>
+                      <ChevronDown className="w-3 h-3 text-gray-400" />
+                    </button>
                   </div>
                   {usdcAmount > 0 && (
                     <div className="flex items-center gap-2 text-sm text-gray-400 px-1">
@@ -324,7 +343,7 @@ export default function Presale() {
                   )}
                   {isConnected && (
                     <p className="text-xs text-gray-500 px-1">
-                      USDC Balance: {presale.usdcBalance.toLocaleString()}
+                      {selectedToken.symbol} Balance: {presale.usdcBalance.toLocaleString()}
                     </p>
                   )}
                 </div>
@@ -415,6 +434,48 @@ export default function Presale() {
                   )}
                 </div>
               </CardContent>
+
+              {/* Token selector modal */}
+              {tokenDropdownOpen && (
+                <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm rounded-lg">
+                  <div className="bg-gray-900 border border-gray-600 rounded-xl shadow-2xl w-64 overflow-hidden">
+                    <div className="flex items-center justify-between px-4 py-3 border-b border-gray-700">
+                      <h3 className="text-sm font-semibold text-white">Select Token</h3>
+                      <button
+                        type="button"
+                        onClick={() => setTokenDropdownOpen(false)}
+                        className="text-gray-400 hover:text-white transition-colors text-lg leading-none"
+                      >
+                        &times;
+                      </button>
+                    </div>
+                    <div className="py-1">
+                      {PAYMENT_TOKENS.map((token) => (
+                        <button
+                          key={token.symbol}
+                          type="button"
+                          onClick={() => {
+                            setSelectedToken(token);
+                            setTokenDropdownOpen(false);
+                          }}
+                          className={`w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-gray-800 transition-colors ${
+                            selectedToken.symbol === token.symbol ? "bg-gray-800/70" : ""
+                          }`}
+                        >
+                          <img src={token.logo} alt={token.symbol} className="w-6 h-6 rounded-full object-cover flex-shrink-0" />
+                          <div>
+                            <span className="text-sm font-semibold text-white">{token.symbol}</span>
+                            <span className="text-xs text-gray-500 ml-2">{token.name}</span>
+                          </div>
+                          {selectedToken.symbol === token.symbol && (
+                            <CheckCircle className="w-4 h-4 text-cyan-400 ml-auto" />
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
             </Card>
           </section>
 
