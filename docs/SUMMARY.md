@@ -16,6 +16,12 @@
 * [Ecosystem](features/ecosystem.md)
 * [Presale](features/presale.md)
 
+## Ecosystem
+
+* [Overview](ecosystem/README.md)
+* [Protocols](ecosystem/protocols.md)
+* [Contract Addresses](ecosystem/contracts.md)
+
 ## API Reference
 
 * [Serverless Functions](api-reference/serverless-functions.md)
