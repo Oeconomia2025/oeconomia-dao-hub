@@ -1,7 +1,7 @@
 import { Switch, Route, useLocation } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
-import { useEffect } from "react";
+import { Suspense, lazy, useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -10,14 +10,15 @@ import { DisclaimerModal } from "@/components/disclaimer-modal";
 import { SEO } from "@/components/seo";
 import { OrganizationSchema, WebAppSchema } from "@/components/structured-data";
 import { liveCoinWatchSyncService } from "@/services/live-coin-watch-sync";
-import Dashboard from "@/pages/dashboard";
-import { Portfolio } from "@/pages/portfolio";
-import Analytics from "@/pages/analytics";
-import Governance from "@/pages/governance";
-import Ecosystem from "@/pages/ecosystem";
-import Presale from "@/pages/presale";
-import Roadmap from "@/pages/roadmap";
-import NotFound from "@/pages/not-found";
+
+const Dashboard = lazy(() => import("@/pages/dashboard"));
+const Portfolio = lazy(() => import("@/pages/portfolio").then(m => ({ default: m.Portfolio })));
+const Analytics = lazy(() => import("@/pages/analytics"));
+const Governance = lazy(() => import("@/pages/governance"));
+const Ecosystem = lazy(() => import("@/pages/ecosystem"));
+const Presale = lazy(() => import("@/pages/presale"));
+const Roadmap = lazy(() => import("@/pages/roadmap"));
+const NotFound = lazy(() => import("@/pages/not-found"));
 
 function PageSEO() {
   const [location] = useLocation();
@@ -28,6 +29,7 @@ function PageSEO() {
 
 function Router() {
   return (
+    <Suspense fallback={<div className="flex items-center justify-center min-h-screen">Loading...</div>}>
     <Switch>
       <Route path="/" component={Dashboard} />
       <Route path="/dashboard" component={Dashboard} />
@@ -39,6 +41,7 @@ function Router() {
       <Route path="/roadmap" component={Roadmap} />
       <Route component={NotFound} />
     </Switch>
+    </Suspense>
   );
 }
 
