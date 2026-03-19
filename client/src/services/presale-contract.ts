@@ -113,7 +113,7 @@ export const ERC20_ABI = [
 function getPublicClient() {
   return createPublicClient({
     chain: sepolia,
-    transport: http(),
+    transport: http("https://eth-sepolia.g.alchemy.com/v2/esuQ5PPGg8-Sr5-X-P-JT"),
   });
 }
 
