@@ -31,6 +31,8 @@ import { Card } from "@/components/ui/card";
 
 // Presale banner is hidden until the presale is announced. The /presale page still works by direct link.
 const SHOW_PRESALE_BANNER = false;
+// Heart button that opens the "Support Development" modal. Set to true to show it again.
+const SHOW_SUPPORT_BUTTON = false;
 
 interface LayoutProps {
   children: ReactNode;
@@ -372,6 +374,7 @@ export function Layout({ children }: LayoutProps) {
             </div>
 
             {/* Support button */}
+            {SHOW_SUPPORT_BUTTON && (
             <Button
               variant="ghost"
               size="sm"
@@ -381,6 +384,7 @@ export function Layout({ children }: LayoutProps) {
             >
               <Heart className="w-4 h-4 text-cyan-400 group-hover:text-white transition-colors fill-current" />
             </Button>
+            )}
           </div>
         </header>
 
