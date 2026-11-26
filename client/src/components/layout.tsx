@@ -29,6 +29,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Card } from "@/components/ui/card";
 
+// Presale banner is hidden until the presale is announced. The /presale page still works by direct link.
+const SHOW_PRESALE_BANNER = false;
+
 interface LayoutProps {
   children: ReactNode;
 }
@@ -307,7 +310,7 @@ export function Layout({ children }: LayoutProps) {
       {/* Main Content */}
       <div className="flex-1 lg:ml-0 mr-9 relative">
         {/* Presale Banner */}
-        {!presaleBannerDismissed && (
+        {SHOW_PRESALE_BANNER && !presaleBannerDismissed && (
           <div
             className="relative z-40 flex items-center justify-center gap-4 px-4 py-3 text-base text-white"
             style={{ background: 'linear-gradient(90deg, #00d4ff, #a855f7, #ff00ff)' }}
