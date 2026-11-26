@@ -308,7 +308,7 @@ export function Layout({ children }: LayoutProps) {
       )}
 
       {/* Main Content */}
-      <div className="flex-1 lg:ml-0 mr-9 relative">
+      <div className="flex-1 min-w-0 lg:ml-0 mr-9 relative">
         {/* Presale Banner */}
         {SHOW_PRESALE_BANNER && !presaleBannerDismissed && (
           <div
