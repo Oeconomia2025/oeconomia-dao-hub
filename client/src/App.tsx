@@ -20,11 +20,14 @@ const Presale = lazy(() => import("@/pages/presale"));
 const Roadmap = lazy(() => import("@/pages/roadmap"));
 const NotFound = lazy(() => import("@/pages/not-found"));
 
+const NOINDEX_PATHS = ["/presale"];
+
 function PageSEO() {
   const [location] = useLocation();
   // Normalize path (strip trailing slash, handle ecosystem sub-routes)
   const path = location === "/" ? "/" : location.replace(/\/$/, "").replace(/\/ecosystem\/.*/, "/ecosystem");
-  return <SEO path={path} />;
+  // Keep unannounced pages out of search engines
+  return <SEO path={path} noIndex={NOINDEX_PATHS.includes(path)} />;
 }
 
 function Router() {

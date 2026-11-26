@@ -43,7 +43,6 @@ const PROTOCOLS: Protocol[] = [
       { title: "Analytics page with TVL, volume, and user growth charts", status: "done" },
       { title: "Portfolio tracker with cross-protocol holdings", status: "done" },
       { title: "Ecosystem directory with all protocol detail pages", status: "done" },
-      { title: "Presale page with OEC token sale interface", status: "done" },
       { title: "Learn center with guides and documentation links", status: "done" },
       { title: "Live token price feeds (OEC, ELOQ, ALUR, ALUD)", status: "done" },
       { title: "Disclaimer modal and under-development notices", status: "done" },
